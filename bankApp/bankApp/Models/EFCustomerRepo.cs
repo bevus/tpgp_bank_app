@@ -6,7 +6,7 @@ using System.Web;
 
 namespace BankApp.Models
 {
-    public class EFCustomerRepo : ICutomerRepo
+    public class EFCustomerRepo : ICustomerRepo
     {
         private BankContext context;
         public EFCustomerRepo(BankContext context)
