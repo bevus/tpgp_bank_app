@@ -167,9 +167,13 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountsGeneratedController.cs" />
+    <Compile Include="Controllers\BankerController.cs" />
     <Compile Include="Controllers\BankersGeneratedController.cs" />
+    <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\CustomersGeneratedController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TransactionController.cs" />
     <Compile Include="Controllers\TransactionsGeneratedController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -226,6 +230,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Banker\" />
+    <Folder Include="Views\Customer\" />
+    <Folder Include="Views\Home\" />
+    <Folder Include="Views\Transaction\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201701261641173_InitialCreate.resx">
