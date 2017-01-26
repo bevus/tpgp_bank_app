@@ -61,6 +61,7 @@ namespace bankApp.Controllers
             return View(customer);
         }
 
+
         // GET: CustomersGenerated/Edit/5
         public ActionResult Edit(int? id)
         {
