@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -45,7 +46,7 @@ namespace bankApp.Controllers
                 account.Solde = item1.Solde;
                 account.Owner = customer;
                 accountRepo.InsertAccount(account);
-                //accountRepo.Save();
+               
                 customer.Accounts.Add(account);
 
                 customerRepo.InsertCustomer(customer);
@@ -57,6 +58,33 @@ namespace bankApp.Controllers
             return View(customer);
         }
 
+
+
+        // GET: CustomersGenerated/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Customer customer = db.Customers.Find(id);
+            if (customer == null)
+            {
+                return HttpNotFound();
+            }
+            return View(customer);
+        }
+
+        // POST: CustomersGenerated/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Customer customer = db.Customers.Find(id);
+            db.Customers.Remove(customer);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
     }
 }
