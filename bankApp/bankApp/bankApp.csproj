@@ -227,6 +227,7 @@
     <Content Include="Views\Customer\Edit.cshtml" />
     <Content Include="Views\Customer\PrintRIB.cshtml" />
     <Content Include="Views\Customer\Test.cshtml" />
+    <Content Include="Views\Banker\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -236,7 +237,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Banker\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\Transaction\" />
   </ItemGroup>

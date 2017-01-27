@@ -1,46 +1,20 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@model IEnumerable<BankApp.Models.Customer>
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Espace Client";
 }
 <h2>Index</h2>
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Consulter transactions ", "../Customers/Create")
 </p>
-<table class="table">
-    <tr>
-      
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Password)
-        </th>
-        <th></th>
-    </tr>
-    @foreach (var item in Model)
-    {
-        <tr>
-           
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-            </td>
-        </tr>
-    }
-</table>
+<p>
+    @Html.ActionLink("Faire un virment ", "../Customers/Virement")
+</p>
+<p>
+    @Html.ActionLink("Simuter demande ", "../Customer/Simulate")
+</p>
+<p>
+    @Html.ActionLink("Imprimer RIB ", "../Customer/PrintRIB")
+</p>
