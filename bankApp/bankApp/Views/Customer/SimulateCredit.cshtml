@@ -1,7 +1,37 @@
-﻿@model dynamic
+﻿@model BankApp.Models.SimulateCredit
 
 @{
     ViewBag.Title = "Simulateur de credit";
 }
 
 <h2>Simulateur de credit</h2>
+<br>
+    @using (Html.BeginForm())
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.RequestedAmount, "Montant demendé")<br />
+            @Html.TextBoxFor(m => m.RequestedAmount, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.RequestedAmount, null, new { @class = "has-error" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Contribution, "Apport")<br />
+            @Html.TextBoxFor(m => m.Contribution, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Contribution)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.HouseholdIncomes, "revenus du foyer/Année")<br />
+            @Html.TextBoxFor(m => m.HouseholdIncomes, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.HouseholdIncomes)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Duration, "Durée/Année")<br />
+            @Html.TextBoxFor(m => m.Duration, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Duration)
+        </div>
+
+
+        <button type="Simuler" class="btn btn-primary">Submit</button>
+    }

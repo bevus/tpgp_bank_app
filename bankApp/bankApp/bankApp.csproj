@@ -84,6 +84,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -146,6 +148,13 @@
     <Content Include="scripts\jquery.validate.unobtrusive.js" />
     <Content Include="scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="scripts\modernizr-2.6.2.js" />
+    <None Include="Service References\CheckCreditServiceReference\Service1.disco" />
+    <None Include="Service References\CheckCreditServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\CheckCreditServiceReference\configuration.svcinfo" />
+    <None Include="Service References\CheckCreditServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Web.config" />
     <Content Include="Views\BankersGenerated\Create.cshtml" />
     <Content Include="Views\BankersGenerated\Delete.cshtml" />
@@ -206,10 +215,16 @@
     <Compile Include="Models\ICustomerRepo.cs" />
     <Compile Include="Models\ISessionRepo.cs" />
     <Compile Include="Models\ITransactionRepo.cs" />
+    <Compile Include="Models\SimulateCredit.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\TransactionsType.cs" />
     <Compile Include="Models\TrensferFrom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service References\CheckCreditServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -236,6 +251,16 @@
     <Content Include="Views\Transaction\Transfer.cshtml" />
     <Content Include="Views\Transaction\Transactions.cshtml" />
     <Content Include="Views\Customer\SimulateCredit.cshtml" />
+    <None Include="Service References\CheckCreditServiceReference\Service1.wsdl" />
+    <None Include="Service References\CheckCreditServiceReference\Service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\CheckCreditServiceReference\Service11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\CheckCreditServiceReference\Service12.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -254,6 +279,12 @@
     <EmbeddedResource Include="Migrations\201701261727240_addedAccountNumber.resx">
       <DependentUpon>201701261727240_addedAccountNumber.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\CheckCreditServiceReference\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
