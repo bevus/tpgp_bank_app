@@ -199,15 +199,12 @@
     <Compile Include="Models\EFBankerRepo.cs" />
     <Compile Include="Models\EFCustomerRepo.cs" />
     <Compile Include="Models\EFTransactionRepo.cs" />
-    <Compile Include="Models\HttpSessionRepo.cs" />
     <Compile Include="Models\IAccountRepo.cs" />
     <Compile Include="Models\IBankerRepo.cs" />
-    <Compile Include="Models\ICustomerRepo.cs" />
-    <Compile Include="Models\ISessionRepo.cs" />
+    <Compile Include="Models\ICutomerRepo.cs" />
     <Compile Include="Models\ITransactionRepo.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\TransactionsType.cs" />
-    <Compile Include="Models\TrensferFrom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -224,11 +221,6 @@
     <Content Include="Views\AccountsGenerated\Edit.cshtml" />
     <Content Include="Views\AccountsGenerated\Index.cshtml" />
     <Content Include="scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\Transaction\Index.cshtml" />
-    <Content Include="Views\Banker\Index.cshtml" />
-    <Content Include="Views\Customer\Index.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Transaction\Transfer.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -238,6 +230,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Banker\" />
+    <Folder Include="Views\Customer\" />
+    <Folder Include="Views\Home\" />
+    <Folder Include="Views\Transaction\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201701261641173_InitialCreate.resx">

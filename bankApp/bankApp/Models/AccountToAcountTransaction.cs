@@ -8,6 +8,6 @@ namespace BankApp.Models
         public Account Destination { get; set; }
         public string Title { get; set; }
 
-        public override string Label => Title;
+        public override string Label => Title + " : de " + Source.ID + " to " + Destination.ID;
     }
 }

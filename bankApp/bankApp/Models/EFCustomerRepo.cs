@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Web;
 
 namespace BankApp.Models
 {
-    public class EFCustomerRepo : ICustomerRepo
+    public class EFCustomerRepo : ICutomerRepo
     {
         private BankContext context;
         public EFCustomerRepo(BankContext context)
@@ -17,16 +16,12 @@ namespace BankApp.Models
 
         public IEnumerable<Customer> GetCustomers()
         {
-            return context.Customers
-                .Include(customer => customer.Accounts)
-                .Include(customer => customer.Banker).ToList();
+            return context.Customers.ToList();
         }
 
         public Customer GetCustomerByID(int customerId)
         {
-            return context.Customers
-                .Include(customer => customer.Accounts)
-                .Include(customer => customer.Banker).Single(c => c.ID == customerId);
+            return context.Customers.Find(customerId);
         }
 
         public void InsertCustomer(Customer customer)

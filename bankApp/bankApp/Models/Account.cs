@@ -15,18 +15,5 @@ namespace BankApp.Models
         public string BIC { get; set; }
         public string IBAN { get; set; }
         public List<Transaction> Transactions { get; set; }
-
-        public void Credit(int amount)
-        {
-            Solde += amount;
-        }
-
-        public bool Debit(int amount)
-        {
-            if(Solde - amount < 0)
-                return false;
-            Solde -= amount;
-            return true;
-        }
     }
 }

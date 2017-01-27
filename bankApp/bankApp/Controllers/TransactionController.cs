@@ -1,122 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Mvc;
-using bankApp.Models;
-using BankApp.Models;
 
 namespace bankApp.Controllers
 {
     public class TransactionController : Controller
     {
-        private ICustomerRepo customerRepo;
-        private IAccountRepo accountRepo;
-        private ITransactionRepo transactionRepo;
-        private ISessionRepo sessionRepo;
-
-        private BankContext context;
-
-        public TransactionController()
-        {   
-            context = new BankContext();
-            context.Configuration.LazyLoadingEnabled = false;
-            transactionRepo = new EFTransactionRepo(context);
-            customerRepo = new EFCustomerRepo(context);
-            accountRepo = new EFAccountRepo(context);
-            sessionRepo = new HttpSessionRepo(Session);
-        }
-
         // GET: Transaction
         public ActionResult Index()
         {
             return View();
-        }
-
-        [HttpGet]
-        public ActionResult Transfer()
-        {
-            var customer = sessionRepo.GetCustomer();
-            return View(getSelectableAccounts(customer));
-        }
-
-        [HttpPost]
-        public ActionResult Transfer(TrensferFrom trensferFrom)
-        {
-            var customer = sessionRepo.GetCustomer();
-            if (ModelState.IsValid)
-            {
-                var sourceAccount = accountRepo.GetAccountByID(trensferFrom.SourceAccount);
-                GetValue(trensferFrom, customer, sourceAccount);
-                if (ModelState.IsValid)
-                {
-                    Account destinationAccount = null;
-                    var accounts = accountRepo.GetAccounts();
-                    foreach (var account in accounts)
-                    {
-                        if (account.IBAN != trensferFrom.IBAN) continue;
-                        destinationAccount = account;
-                        break;
-                    }
-
-                    var sourceAtaTransaction = new AccountToAcountTransaction
-                    {
-                        Account = sourceAccount,
-                        Source = sourceAccount,
-                        Destination = destinationAccount,
-                        Date = DateTime.Now,
-                        Amount = trensferFrom.Amount,
-                        TransactionType = TransactionType.DEBIT,
-                        Title = trensferFrom.Label + " - " + trensferFrom.DestinationFullName
-                    };
-                    transactionRepo.InsertTransaction(sourceAtaTransaction);
-                    sourceAccount.Debit(trensferFrom.Amount);
-                    if (destinationAccount != null)
-                    {
-                        var destinationAtaTransaction = new AccountToAcountTransaction
-                        {
-                            Account = destinationAccount,
-                            Date = DateTime.Now,
-                            Amount = trensferFrom.Amount,
-                            TransactionType = TransactionType.CREDIT,
-                            Title = trensferFrom.Label + " - " + trensferFrom.DestinationFullName
-                        };
-                        transactionRepo.InsertTransaction(destinationAtaTransaction);
-                        destinationAccount.Credit(trensferFrom.Amount);
-                    }
-                    TempData["notice"] = "virement enregistré";
-                    accountRepo.Save();
-                    return RedirectToAction("Index", "Customer");
-                }
-            }
-            return View(getSelectableAccounts(customer));
-        }
-
-        private void GetValue(TrensferFrom trensferFrom, Customer customer, Account sourceAccount)
-        {
-            if (trensferFrom.Amount <= 0 || trensferFrom.Amount > 5000)
-                ModelState.AddModelError("Amount", "Montant invalid : le montant doit etre compris entre 1 € et 5000 €");
-            if (!customer.Accounts.Exists(ac => ac.ID == trensferFrom.SourceAccount))
-                ModelState.AddModelError("SourceAcount", "Compte invalide");
-            if (customer.Accounts.Single(a => a.ID == trensferFrom.SourceAccount).IBAN == trensferFrom.IBAN)
-                ModelState.AddModelError("IBAN", "Compte source et distination son les memes");
-            if (sourceAccount.Solde - trensferFrom.Amount < 0)
-                ModelState.AddModelError("Amount", "Solde insufissant pour effectuer ce virement");
-        }   
-
-        private TrensferFrom getSelectableAccounts(Customer customer)
-        {
-            var accounts = new List<SelectListItem>();
-            foreach (var account in customer.Accounts)
-            {
-                accounts.Add(new SelectListItem
-                {
-                    Text = account.ID.ToString(),
-                    Value = account.ID.ToString()
-                });
-            }
-            return new TrensferFrom { AccountsId = accounts };
         }
     }
 }
