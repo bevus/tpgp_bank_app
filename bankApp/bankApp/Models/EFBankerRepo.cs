@@ -14,12 +14,12 @@ namespace BankApp.Models
 
         public IEnumerable<Banker> GetBankers()
         {
-            return context.Bankers.ToList();
+            return context.Bankers.Include(b => b.Customers).ToList();
         }
 
         public Banker GetBankerByID(int bankerId)
         {
-            return context.Bankers.Find(bankerId);
+            return context.Bankers.Include(b => b.Customers).Single(b => b.ID == bankerId);
         }
 
         public void InsertBanker(Banker banker)

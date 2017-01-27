@@ -14,12 +14,16 @@ namespace BankApp.Models
 
         public IEnumerable<Account> GetAccounts()
         {
-            return context.Accounts.ToList();
+            return context.Accounts
+                .Include(account => account.Owner)
+                .Include(account => account.Transactions).ToList();
         }
 
         public Account GetAccountByID(int accountId)
         {
-            return context.Accounts.Find(accountId);
+            return context.Accounts
+                .Include(account => account.Owner)
+                .Include(account => account.Transactions).Single(o => o.ID == accountId);
         }
 
         public void InsertAccount(Account account)

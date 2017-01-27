@@ -14,12 +14,12 @@ namespace BankApp.Models
 
         public IEnumerable<Transaction> GetTransactions()
         {
-            return context.Transactions.ToList();
+            return context.Transactions.Include(t => t.Account).ToList();
         }
 
         public Transaction GetTransactionByID(int transactionId)
         {
-            return context.Transactions.Find(transactionId);
+            return context.Transactions.Include(t => t.Account).Single(t => t.ID == transactionId);
         }
 
         public void InsertTransaction(Transaction transaction)
