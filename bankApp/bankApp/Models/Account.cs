@@ -16,12 +16,12 @@ namespace BankApp.Models
         public string IBAN { get; set; }
         public List<Transaction> Transactions { get; set; }
 
-        public void Credit(int amount)
+        public void Credit(double amount)
         {
             Solde += amount;
         }
 
-        public bool Debit(int amount)
+        public bool Debit(double amount)
         {
             if(Solde - amount < 0)
                 return false;

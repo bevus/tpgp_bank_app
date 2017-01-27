@@ -1,0 +1,18 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "BankApplication";
+}
+<style type="text/css">.login-button {
+     width: 100px;
+     margin: 0 10px;
+ }</style>
+<hr/>
+<div class="jumbotron text-center">
+    <h1>Bank Application</h1>
+    <hr/>
+    <h4>
+        @Html.ActionLink("Client", "LoginCustomer", "Home", new {@class = "btn btn-lg btn-primary login-button"}) 
+        @Html.ActionLink("Banquier", "LoginBanker", "Home", new {@class = "btn btn-lg btn-success login-button"})
+    </h4>
+</div>

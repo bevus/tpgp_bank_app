@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace BankApp.Controllers
@@ -25,12 +24,13 @@ namespace BankApp.Controllers
         // GET: Customer
         public ActionResult Index()
         {
-
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
             return View(customerRepo.GetCustomers());
         }
 
         public ActionResult Create()
         {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
             return View(new AddCustomerForm
             {
                 Bankers = bankerRepo.GetBankers().Select(b => new SelectListItem
@@ -44,6 +44,7 @@ namespace BankApp.Controllers
         [HttpPost]
         public ActionResult Create(AddCustomerForm form)
         {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
             if (ModelState.IsValid)
             {
                 validCreateCustomerForm(form);
@@ -88,6 +89,7 @@ namespace BankApp.Controllers
         // GET: CustomersGenerated/Delete/5
         public ActionResult Delete(int? id)
         {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -105,6 +107,7 @@ namespace BankApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
             Customer customer = customerRepo.GetCustomerByID(id);
             db.Customers.Remove(customer);
             db.SaveChanges();
@@ -160,6 +163,7 @@ namespace BankApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult PrintPDF([Bind(Include = "Id,Solde")] Account account)
         {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
             if (ModelState.IsValid)
             {
                 db.Accounts.Add(account);
@@ -186,6 +190,12 @@ namespace BankApp.Controllers
                 ModelState.AddModelError("IBAN", "IBAN déja attribué");
             }
             catch (Exception){}
+        }
+
+        public ActionResult Logout()
+        {
+            Session[Utils.SessionBanker] = null;
+            return RedirectToAction("Index", "Home");
         }
     }
 }

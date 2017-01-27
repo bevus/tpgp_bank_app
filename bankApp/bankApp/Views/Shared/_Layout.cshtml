@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using BankApp.Models
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -8,9 +9,9 @@
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
     <script src="~/scripts/jquery-1.10.2.min.js"></script>
-    <script src="~/scripts/bootstrap.min.js"></script>
     <script src="~/scripts/jquery.validate.min.js"></script>
     <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/scripts/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -21,19 +22,61 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <a href="#" class="navbar-brand">Bank Application</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav"></ul>
+                    @if (Session[Utils.SessionCustomer] != null)
+                    {
+                        var customer = Session[Utils.SessionCustomer] as Customer;
+
+                        <ul class="nav navbar-nav">
+                            <li>@Html.ActionLink("Historique", "Index", "Customer", new { area = "" }, new { @class = "" })</li>
+                            <li>@Html.ActionLink("Virement", "Transfer", "Transaction", new { area = "" }, new { @class = "" })</li>
+                            <li>@Html.ActionLink("Simulateur de credit", "SimulateCredit", "Customer", new { area = "" }, new { @class = "" })</li>
+                            <li>@Html.ActionLink("Imprimer RIB", "PrintRIB", "Customer", new { area = "" }, new { @class = "" })</li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@customer.FirstName<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Déconnexion", "Logout", "Customer")</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+                    else if (Session[Utils.SessionBanker] != null)
+                    {
+                        var banker = Session[Utils.SessionBanker] as Banker;
+
+                        <ul class="nav navbar-nav">
+                            <li>@Html.ActionLink("Clients", "Index", "Banker", new { area = "" }, new { @class = "" })</li>
+                            <li>@Html.ActionLink("Inscrir un client", "Create", "Banker", new { area = "" }, new { @class = "" })</li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@banker.FirstName<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Déconnexion", "Logout", "Banker")</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
             </div>
         </div>
     </div>
 
     <div class="container body-content">
-        @if (TempData["notice"] != null)
-        {
-            <h3 class="alert alert-success">@TempData["notice"]</h3>
-        }
+        <div class="notices text-center">
+            @if (TempData["notice"] != null)
+            {
+                <h4 class="alert alert-success text-center">@TempData["notice"]</h4>
+            }
+            @if (TempData["error"] != null)
+            {
+                <h4 class="alert alert-danger text-center">@TempData["error"]</h4>
+            }
+        </div>
+
         @RenderBody()
         <hr />
         <footer>

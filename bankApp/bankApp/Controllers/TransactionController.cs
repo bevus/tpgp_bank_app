@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using BankApp.Models;
@@ -10,7 +11,6 @@ namespace BankApp.Controllers
         private ICustomerRepo customerRepo;
         private IAccountRepo accountRepo;
         private ITransactionRepo transactionRepo;
-        private ISessionRepo sessionRepo;
 
         private BankContext context;
 
@@ -21,7 +21,6 @@ namespace BankApp.Controllers
             transactionRepo = new EFTransactionRepo(context);
             customerRepo = new EFCustomerRepo(context);
             accountRepo = new EFAccountRepo(context);
-            sessionRepo = new HttpSessionRepo(Session);
         }
 
         // GET: Transaction
@@ -33,26 +32,35 @@ namespace BankApp.Controllers
         [HttpGet]
         public ActionResult Transfer()
         {
-            var customer = sessionRepo.GetCustomer();
+            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
+            var customer = Session[Utils.SessionCustomer] as Customer;
             return View(getSelectableAccounts(customer));
         }
 
         public ActionResult Transactions()
         {
-            //if (customer == null)
-            //{
-            //    TempData["notice"] = "<p class='alert alert-danger'>Client inconnu</p>";
-            //    return RedirectToAction("Index", "Home");
-            //}
-            var customer = sessionRepo.GetCustomer();
+            if (Session[Utils.SessionTransactionCustomer] == null)
+            {
+                TempData["error"] = "Client inconnu";
+                return RedirectToAction("Index", "Home");
+            };
+            var customer = Session[Utils.SessionTransactionCustomer] as Customer;
+            ViewBag.Solde = 0;
+            foreach (var account in customer.Accounts)
+            {
+                ViewBag.Solde += accountRepo.GetAccountByID(account.ID).Solde;
+            }
             var accountsId = customer.Accounts.Select(a => a.ID);
-            return View(transactionRepo.GetTransactions().Where(t => accountsId.Contains(t.Account.ID)).ToList());
+            return View(transactionRepo.GetTransactions().Where(t => 
+                    accountsId.Contains(t.Account.ID) &&
+                    (DateTime.Now - t.Date).TotalDays < 30
+                ).OrderByDescending(t => t.Date).ToList());
         }
 
         [HttpPost]
         public ActionResult Transfer(TrensferFrom trensferFrom)
         {
-            var customer = sessionRepo.GetCustomer();
+            var customer = Session[Utils.SessionCustomer] as Customer;
             if (ModelState.IsValid)
             {
                 var sourceAccount = accountRepo.GetAccountByID(trensferFrom.SourceAccount);

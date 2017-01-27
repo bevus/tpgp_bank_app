@@ -26,7 +26,7 @@ namespace BankApp.Models
         public string CustomerNumber { get; set; }
 
         [Required(ErrorMessage = "Champ obligatoire")]
-        [RegularExpression(@"^\d{6}$", ErrorMessage = "numèro de compte invalide: doit contenir 6 chiffres uniquement")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "mot de passe invalide: doit contenir 6 chiffres uniquement")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Champ obligatoire")]

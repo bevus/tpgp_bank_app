@@ -7,8 +7,8 @@ namespace BankApp.Models
     public class TrensferFrom
     {
         [Required(ErrorMessage = "champ obligatoire")]
-        [RegularExpression(@"\d+", ErrorMessage = "Montant invalide")]
-        public int Amount { get; set; }
+        [RegularExpression(@"^[0-9]+(\.[0-9]+)?$", ErrorMessage = "Montant invalide")]
+        public double Amount { get; set; }
 
         [Required(ErrorMessage = "champ obligatoire")]
         [RegularExpression(@"[a-zA-Z0-9 ]+", ErrorMessage = ("intitulé invalide : les caractères specieaux ne sont pas autorisés"))]

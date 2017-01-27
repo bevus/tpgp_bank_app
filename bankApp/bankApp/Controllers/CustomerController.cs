@@ -1,10 +1,5 @@
 ﻿using BankApp.Models;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace BankApp.Controllers
@@ -18,21 +13,20 @@ namespace BankApp.Controllers
         {
             customerRepo = new EFCustomerRepo(db);
             accountRepo = new EFAccountRepo(db);
-        }
+        }        
         // GET: Customer
         public ActionResult Index()
         {
-
-            return View(customerRepo.GetCustomers());
+            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
+            Session[Utils.SessionTransactionCustomer] = Session[Utils.SessionCustomer] as Customer;
+            return RedirectToAction("Transactions", "Transaction");
         }
 
         public ActionResult PrintRIB()
         {
-            db.Configuration.LazyLoadingEnabled = false;
-
-            Account account = db.Accounts.Find(2);
-            //Include("Customer").
-            Customer customer = db.Customers.Find(account.Owner_ID);
+            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
+            var customer = Session[Utils.SessionCustomer] as Customer;
+            var account = accountRepo.GetAccountByID(2);
             var tuple = new Tuple<Account, Customer>(account, customer);
             return View(tuple);
         }
@@ -43,9 +37,9 @@ namespace BankApp.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult PrintPDF([Bind(Include = "Id,Solde")] Account account)
         {
+            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
             if (ModelState.IsValid)
             {
                 db.Accounts.Add(account);
@@ -54,6 +48,12 @@ namespace BankApp.Controllers
             }
 
             return View(account);
+        }
+
+        public ActionResult Logout()
+        {
+            Session[Utils.SessionCustomer] = null;
+            return RedirectToAction("Index", "Home");
         }
     }
 }
