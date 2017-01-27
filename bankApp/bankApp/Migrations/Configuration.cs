@@ -1,4 +1,4 @@
-namespace bankApp.Migrations
+namespace BankApp.Migrations
 {
     using System;
     using System.Data.Entity;

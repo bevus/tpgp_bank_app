@@ -1,0 +1,2 @@
+Montant Emprunté = (Montat demendé - Apport) * (1,05 + Durré (en année)/10*0,01)
+Montant Emprunté / duréé en année <= salaire anual de foyer* 0,03
