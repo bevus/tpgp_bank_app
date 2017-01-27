@@ -121,6 +121,30 @@ namespace bankApp.Controllers
             return View(customer);
         }
 
+        public ActionResult PrintRIB()
+        {
+            db.Configuration.LazyLoadingEnabled = false;
+
+            Account account = db.Accounts.Find(2);
+            //Include("Customer").
+            Customer customer = db.Customers.Find(account.Owner_ID);
+            var tuple = new Tuple<Account, Customer>(account, customer);
+            return View(tuple);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PrintPDF([Bind(Include = "Id,Solde")] Account account)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Accounts.Add(account);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(account);
+        }
 
     }
 }

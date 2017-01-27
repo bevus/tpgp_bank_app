@@ -1,0 +1,62 @@
+﻿@model Tuple<BankApp.Models.Account, BankApp.Models.Customer>
+@{
+    ViewBag.Title = "RIB";
+    
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.min.js"></script>
+<div id="divRIB">
+    <div class="jumbotron">
+        <div id="rib">
+            <h5>
+                <b> Acount number : </b>
+                @Html.DisplayFor(model => model.Item1.ID)
+            </h5>
+
+            <h5>
+                <b> Client id :  </b>
+                @Html.DisplayFor(model => model.Item2.ID) 
+            </h5>
+            <h5> 
+                <b>Client FirstName :</b>
+                  @Html.DisplayFor(model => model.Item2.FirstName)
+            </h5>
+            <h5>
+                <b>Client LastName :</b>
+             @Html.DisplayFor(model => model.Item2.LastName)
+            </h5>
+            <hr />
+            <h5>
+                <b>  BIC :</b>
+                     @Html.DisplayFor(model => model.Item1.BIC)
+                <b>   IBAN :</b>
+                     @Html.DisplayFor(model => model.Item1.IBAN)
+            </h5>
+
+
+        </div>
+
+    </div>
+</div>
+    
+<button onclick="javascript:Export();">Print RIB</button>
+
+<script type="text/javascript">
+ function Export() {
+     var pdf = new jsPDF('portrait', 'pt', 'a4');
+ pdf.text(50, 50, "RIB");
+ source = document.getElementById('divRIB').innerHTML;
+ specialElementHandlers = {
+  '#bypassme': function (element, renderer) {
+  return true
+ }
+ };
+ 
+ pdf.fromHTML(source, 50, 50, {
+     'width': 250,
+     'elementHandlers': specialElementHandlers
+ });
+ pdf.save('RIB.pdf');
+
+ }
+</script>
