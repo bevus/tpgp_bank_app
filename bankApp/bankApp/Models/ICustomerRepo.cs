@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankApp.Models
 {
-    interface  ICutomerRepo
+    interface  ICustomerRepo
     {
         IEnumerable<Customer> GetCustomers();
         Customer GetCustomerByID(int customerId);
