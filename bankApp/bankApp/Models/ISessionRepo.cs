@@ -1,6 +1,6 @@
 ﻿using BankApp.Models;
 
-namespace bankApp.Models
+namespace BankApp.Models
 {
     public interface ISessionRepo
     {

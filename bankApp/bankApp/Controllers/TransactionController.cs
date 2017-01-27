@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Web;
 using System.Web.Mvc;
-using bankApp.Models;
 using BankApp.Models;
 
-namespace bankApp.Controllers
+namespace BankApp.Controllers
 {
     public class TransactionController : Controller
     {
@@ -39,6 +35,18 @@ namespace bankApp.Controllers
         {
             var customer = sessionRepo.GetCustomer();
             return View(getSelectableAccounts(customer));
+        }
+
+        public ActionResult Transactions()
+        {
+            //if (customer == null)
+            //{
+            //    TempData["notice"] = "<p class='alert alert-danger'>Client inconnu</p>";
+            //    return RedirectToAction("Index", "Home");
+            //}
+            var customer = sessionRepo.GetCustomer();
+            var accountsId = customer.Accounts.Select(a => a.ID);
+            return View(transactionRepo.GetTransactions().Where(t => accountsId.Contains(t.Account.ID)).ToList());
         }
 
         [HttpPost]
@@ -107,15 +115,10 @@ namespace bankApp.Controllers
 
         private TrensferFrom getSelectableAccounts(Customer customer)
         {
-            var accounts = new List<SelectListItem>();
-            foreach (var account in customer.Accounts)
+            var accounts = customer.Accounts.Select(account => new SelectListItem
             {
-                accounts.Add(new SelectListItem
-                {
-                    Text = account.ID.ToString(),
-                    Value = account.ID.ToString()
-                });
-            }
+                Text = account.ID.ToString(), Value = account.ID.ToString()
+            }).ToList();
             return new TrensferFrom { AccountsId = accounts };
         }
     }

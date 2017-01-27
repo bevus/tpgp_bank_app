@@ -5,16 +5,16 @@
 @{
     ViewBag.Title = "Espace Client";
 }
-<h2>Index</h2>
+<h2>Espace Client</h2>
 <p>
-    @Html.ActionLink("Consulter transactions ", "../Customers/Create")
+    @Html.ActionLink("Consulter transactions", "Transactions", "Transaction")
 </p>
 <p>
-    @Html.ActionLink("Faire un virment ", "../Customers/Virement")
+    @Html.ActionLink("Faire un virement ", "Transfer", "Transaction")
 </p>
 <p>
-    @Html.ActionLink("Simuter demande ", "../Customer/Simulate")
+    @Html.ActionLink("Simuter demande ", "SimulateCredit", "Customer")
 </p>
 <p>
-    @Html.ActionLink("Imprimer RIB ", "../Customer/PrintRIB")
+    @Html.ActionLink("Imprimer RIB ", "PrintRIB", "Customer")
 </p>

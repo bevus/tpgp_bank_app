@@ -1,0 +1,37 @@
+﻿@using BankApp.Models
+@model List<BankApp.Models.Transaction>
+
+@{
+    ViewBag.Title = "title";
+}
+
+<h2>Liste des transaction</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <td></td>
+        <td>Debit</td>
+        <td>Credit</td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var transaction in Model)
+    {
+        <tr>
+            <td>@transaction.Label</td>
+            @switch (transaction.TransactionType)
+            {
+                case TransactionType.DEBIT:
+                    <td>@transaction.Amount €</td>
+                    <td> - </td>
+                    break;
+                case TransactionType.CREDIT:
+                    <td> - </td>
+                    <td>@transaction.Amount €</td>
+                    break;
+            }
+        </tr>
+    }
+    </tbody>
+</table>

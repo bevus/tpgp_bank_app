@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace bankApp.Controllers
+namespace BankApp.Controllers
 {
     public class HomeController : Controller
     {

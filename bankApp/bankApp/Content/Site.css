@@ -15,4 +15,13 @@ select,
 textarea {
     max-width: 280px;
 }
-
+.field-validation-error {
+    color: #a52a2a;
+    font-weight: 600;
+}
+.input-validation-error {
+    border-color: #a52a2a;
+}
+input .valid{
+    border-color: #228b22;
+}

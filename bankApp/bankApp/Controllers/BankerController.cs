@@ -6,18 +6,22 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
-namespace bankApp.Controllers
+namespace BankApp.Controllers
 {
     public class BankerController : Controller
     {
         private BankContext db = new BankContext();
         private ICustomerRepo customerRepo;
         private IAccountRepo accountRepo;
+        private IBankerRepo bankerRepo;
+
         public BankerController()
         {
             customerRepo = new EFCustomerRepo(db);
             accountRepo = new EFAccountRepo(db);
+            bankerRepo = new EFBankerRepo(db);
         }
+
         // GET: Customer
         public ActionResult Index()
         {
@@ -27,35 +31,56 @@ namespace bankApp.Controllers
 
         public ActionResult Create()
         {
-            return View();
+            return View(new AddCustomerForm
+            {
+                Bankers = bankerRepo.GetBankers().Select(b => new SelectListItem
+                {
+                    Value = b.ID.ToString(),
+                    Text = b.FirstName + " " + b.LastName
+                })
+            });
         }
 
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Account item1, Customer item2)
+        public ActionResult Create(AddCustomerForm form)
         {
-            Customer customer = new Customer();
             if (ModelState.IsValid)
             {
-                customer.FirstName = item2.FirstName;
-                customer.LastName = item2.LastName;
-                customer.Password = item2.Password;
-                customer.Banker_ID = item2.Banker_ID;
-                Account account = new Account();
-                account.Solde = item1.Solde;
-                account.Owner = customer;
-                accountRepo.InsertAccount(account);
-
-                customer.Accounts.Add(account);
-
-                customerRepo.InsertCustomer(customer);
-                customerRepo.Save();
-
-                return RedirectToAction("Index");
+                validCreateCustomerForm(form);
+                if (ModelState.IsValid)
+                {
+                    var customer = new Customer
+                    {
+                        FirstName = form.FirstName,
+                        LastName = form.LastName,
+                        AccountNumber = form.CustomerNumber,
+                        Password = form.Password,
+                        Banker_ID = form.BankerID,
+                        Accounts = new List<Account>()
+                    };
+                    var account = new Account
+                    {
+                        Solde = form.Solde,
+                        Owner = customer,
+                        BIC = form.BIC,
+                        IBAN = form.IBAN
+                    };
+                    accountRepo.InsertAccount(account);
+                    customer.Accounts.Add(account);
+                    customerRepo.InsertCustomer(customer);
+                    customerRepo.Save();
+                    return RedirectToAction("Index");
+                }
             }
 
-            return View(customer);
+            return View(new AddCustomerForm
+            {
+                Bankers = bankerRepo.GetBankers().Select(b => new SelectListItem
+                {
+                    Value = b.ID.ToString(),
+                    Text = b.FirstName + " " + b.LastName
+                })
+            });
         }
 
 
@@ -67,7 +92,7 @@ namespace bankApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = customerRepo.GetCustomerByID((int)id);
+            Customer customer = customerRepo.GetCustomerByID((int) id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -94,7 +119,7 @@ namespace bankApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = customerRepo.GetCustomerByID((int)id);
+            Customer customer = customerRepo.GetCustomerByID((int) id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -143,6 +168,24 @@ namespace bankApp.Controllers
             }
 
             return View(account);
+        }
+
+        private void validCreateCustomerForm(AddCustomerForm form)
+        {
+            if (form.Solde < 50)
+                ModelState.AddModelError("Solde", "le solde initial doit etre superieur à 50€");
+            try
+            {
+                customerRepo.GetCustomers().First(c => c.AccountNumber == form.CustomerNumber);
+                ModelState.AddModelError("CustomerNumber", "ce numéro utilisateur est déja attribué");
+            }
+            catch (Exception){}
+            try
+            {
+                accountRepo.GetAccounts().First(c => c.IBAN == form.IBAN);
+                ModelState.AddModelError("IBAN", "IBAN déja attribué");
+            }
+            catch (Exception){}
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Web.SessionState;
 using BankApp.Models;
 
-namespace bankApp.Models
+namespace BankApp.Models
 {
     public class HttpSessionRepo : ISessionRepo
     {

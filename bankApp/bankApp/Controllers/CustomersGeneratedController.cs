@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using BankApp.Models;
 
-namespace bankApp.Controllers
+namespace BankApp.Controllers
 {
     public class CustomersGeneratedController : Controller
     {

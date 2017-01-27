@@ -189,6 +189,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountToAcountTransaction.cs" />
+    <Compile Include="Models\AddCustomerForm.cs" />
     <Compile Include="Models\AgencyTransaction.cs" />
     <Compile Include="Models\BankContext.cs" />
     <Compile Include="Models\Banker.cs" />
@@ -199,12 +200,15 @@
     <Compile Include="Models\EFBankerRepo.cs" />
     <Compile Include="Models\EFCustomerRepo.cs" />
     <Compile Include="Models\EFTransactionRepo.cs" />
+    <Compile Include="Models\HttpSessionRepo.cs" />
     <Compile Include="Models\IAccountRepo.cs" />
     <Compile Include="Models\IBankerRepo.cs" />
     <Compile Include="Models\ICustomerRepo.cs" />
+    <Compile Include="Models\ISessionRepo.cs" />
     <Compile Include="Models\ITransactionRepo.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\TransactionsType.cs" />
+    <Compile Include="Models\TrensferFrom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -222,12 +226,16 @@
     <Content Include="Views\AccountsGenerated\Index.cshtml" />
     <Content Include="scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Customer\Index.cshtml" />
-    <Content Include="Views\Customer\Create.cshtml" />
-    <Content Include="Views\Customer\Delete.cshtml" />
-    <Content Include="Views\Customer\Edit.cshtml" />
+    <Content Include="Views\Banker\Create.cshtml" />
+    <Content Include="Views\Banker\Delete.cshtml" />
+    <Content Include="Views\Banker\Edit.cshtml" />
     <Content Include="Views\Customer\PrintRIB.cshtml" />
     <Content Include="Views\Customer\Test.cshtml" />
     <Content Include="Views\Banker\Index.cshtml" />
+    <Content Include="Views\Transaction\Index.cshtml" />
+    <Content Include="Views\Transaction\Transfer.cshtml" />
+    <Content Include="Views\Transaction\Transactions.cshtml" />
+    <Content Include="Views\Customer\SimulateCredit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -238,7 +246,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Views\Transaction\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201701261641173_InitialCreate.resx">

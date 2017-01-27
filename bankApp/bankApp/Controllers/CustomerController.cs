@@ -7,7 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
-namespace bankApp.Controllers
+namespace BankApp.Controllers
 {
     public class CustomerController : Controller
     {
@@ -22,10 +22,10 @@ namespace bankApp.Controllers
         // GET: Customer
         public ActionResult Index()
         {
-           
+
             return View(customerRepo.GetCustomers());
         }
-        
+
         public ActionResult PrintRIB()
         {
             db.Configuration.LazyLoadingEnabled = false;
@@ -35,6 +35,11 @@ namespace bankApp.Controllers
             Customer customer = db.Customers.Find(account.Owner_ID);
             var tuple = new Tuple<Account, Customer>(account, customer);
             return View(tuple);
+        }
+
+        public ActionResult SimulateCredit()
+        {
+            return View();
         }
 
         [HttpPost]
@@ -50,6 +55,5 @@ namespace bankApp.Controllers
 
             return View(account);
         }
-
     }
 }
