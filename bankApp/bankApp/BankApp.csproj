@@ -201,6 +201,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountToAcountTransaction.cs" />
+    <Compile Include="Models\AddAccountForm.cs" />
     <Compile Include="Models\AddCustomerForm.cs" />
     <Compile Include="Models\AgencyTransaction.cs" />
     <Compile Include="Models\BankContext.cs" />
@@ -272,6 +273,7 @@
     </None>
     <Content Include="Views\Customer\ChangePassword.cshtml" />
     <Content Include="Views\Banker\ChangePassword.cshtml" />
+    <Content Include="Views\Banker\AddAccount.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

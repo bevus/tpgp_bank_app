@@ -159,12 +159,18 @@ namespace BankApp.Controllers
                 ModelState.AddModelError("CustomerNumber", "ce numéro utilisateur est déja attribué");
             }
             catch (Exception){}
+            validCreateAccount(new AddAccountForm {BIC = form.BIC, IBAN = form.IBAN});
+            
+        }
+
+        private void validCreateAccount(AddAccountForm form)
+        {
             try
             {
                 accountRepo.GetAccounts().First(c => c.IBAN == form.IBAN);
                 ModelState.AddModelError("IBAN", "IBAN déja attribué");
             }
-            catch (Exception){}
+            catch (Exception) { }
         }
 
         public ActionResult Logout()
@@ -251,6 +257,49 @@ namespace BankApp.Controllers
                 return RedirectToAction("Index");
             Session[Utils.SessionRIBCustomer] = customer;
             return RedirectToAction("PrintRIB", "Customer");
+        }
+        [HttpGet]
+        public ActionResult AddAccount(int? id)
+        {
+            if(Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            var customer = ValideCustomerForBanker(id);
+            if (customer == null)
+                return RedirectToAction("Index");
+            ViewBag.customer = customer;
+            Session[Utils.SessionAddAccountCustomer] = customer;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult AddAccount(AddAccountForm form)
+        {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (ModelState.IsValid)
+            {
+                var customer = Session[Utils.SessionAddAccountCustomer] as Customer;
+                if (customer == null)
+                {
+                    TempData["error"] = "client inconnu";
+                    return RedirectToAction("Index");
+                }
+                validCreateAccount(form);
+                if (ModelState.IsValid)
+                {
+                    customer = customerRepo.GetCustomerByID(customer.ID);
+                    customer.Accounts.Add(new Account
+                    {
+                        BIC = form.BIC,
+                        IBAN = form.IBAN,
+                        Owner = customer,
+                        Solde = 0d
+                    });
+                    customerRepo.Save();
+                    TempData["notice"] = "Compte ajouté";
+                    Session[Utils.SessionAddAccountCustomer] = null;
+                    return RedirectToAction("Index");
+                }
+                ViewBag.customer = customer;
+            }
+            return View();
         }
     }
 }
