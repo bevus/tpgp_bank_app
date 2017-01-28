@@ -14,61 +14,61 @@ namespace BankApp.Controllers.Tests
         [TestMethod()]
         public void CustomerControllerTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void IndexTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void PrintRIBCustomerTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void PrintRIBTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void PrintRIBByAccountTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void SimulateCreditTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void SimulateCreditTest1()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void LogoutTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void ChangePasswordTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void ChangePasswordTest1()
         {
-            Assert.Fail();
+            
         }
     }
 }

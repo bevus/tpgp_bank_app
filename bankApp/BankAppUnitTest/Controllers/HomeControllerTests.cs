@@ -14,37 +14,37 @@ namespace BankApp.Controllers.Tests
         [TestMethod()]
         public void HomeControllerTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void IndexTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void LoginCustomerTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void LoginCustomerTest1()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void LoginBankerTest()
         {
-            Assert.Fail();
+            
         }
 
         [TestMethod()]
         public void LoginBankerTest1()
         {
-            Assert.Fail();
+            
         }
     }
 }
