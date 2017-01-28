@@ -26,10 +26,27 @@ namespace BankApp.Controllers
         {
             this.customerRepo = customerRepo;
             this.accountRepo = accountRepo;
-            this.transactionRepo = transactionRepo;
+            this.transactionRepo = transactionRepo; 
             this.context = context;
         }
 
+        public Customer TransactionCustomer
+        {
+            get
+            {
+                if (Session?[Utils.SessionTransactionCustomer] == null)
+                    return null;
+                try
+                {
+                    return Session[Utils.SessionTransactionCustomer] as Customer;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            set { Session[Utils.SessionTransactionCustomer] = value; }
+        }
 
         // GET: Transaction
         public ActionResult Index()
@@ -40,19 +57,18 @@ namespace BankApp.Controllers
         [HttpGet]
         public ActionResult Transfer()
         {
-            if (Session[Utils.SessionTransactionCustomer] == null) return RedirectToAction("Index", "Home");
-            var customer = Session[Utils.SessionTransactionCustomer] as Customer;
-            return View(getSelectableAccounts(customer));
+            if (TransactionCustomer == null) return RedirectToAction("Index", "Home");
+            return View(getSelectableAccounts(TransactionCustomer));
         }
 
         public ActionResult Transactions()
         {
-            if (Session[Utils.SessionTransactionCustomer] == null)
+            if (TransactionCustomer == null)
             {
                 TempData["error"] = "Client inconnu";
                 return RedirectToAction("Index", "Home");
             };
-            var customer = Session[Utils.SessionTransactionCustomer] as Customer;
+            var customer = TransactionCustomer;
             ViewBag.Solde = 0;
             foreach (var account in customer.Accounts)
             {
@@ -68,22 +84,20 @@ namespace BankApp.Controllers
         [HttpPost]
         public ActionResult Transfer(TrensferFrom trensferFrom)
         {
-            var customer = Session[Utils.SessionCustomer] as Customer;
+            if (TransactionCustomer == null)
+            {
+                TempData["error"] = "Client inconnu";
+                return RedirectToAction("Index", "Home");
+            }
+            var customer = customerRepo.GetCustomerByID(TransactionCustomer.ID);
             if (ModelState.IsValid)
             {
                 var sourceAccount = accountRepo.GetAccountByID(trensferFrom.SourceAccount);
-                GetValue(trensferFrom, customer, sourceAccount);
+                ValideTrensfer(trensferFrom, customer, sourceAccount);
                 if (ModelState.IsValid)
                 {
-                    Account destinationAccount = null;
                     var accounts = accountRepo.GetAccounts();
-                    foreach (var account in accounts)
-                    {
-                        if (account.IBAN != trensferFrom.IBAN) continue;
-                        destinationAccount = account;
-                        break;
-                    }
-
+                    var destinationAccount = accounts.FirstOrDefault(account => account.IBAN == trensferFrom.IBAN);
                     var sourceAtaTransaction = new AccountToAcountTransaction
                     {
                         Account = sourceAccount,
@@ -117,7 +131,7 @@ namespace BankApp.Controllers
             return View(getSelectableAccounts(customer));
         }
 
-        private void GetValue(TrensferFrom trensferFrom, Customer customer, Account sourceAccount)
+        private void ValideTrensfer(TrensferFrom trensferFrom, Customer customer, Account sourceAccount)
         {
             if (trensferFrom.Amount <= 0 || trensferFrom.Amount > 5000)
                 ModelState.AddModelError("Amount", "Montant invalid : le montant doit etre compris entre 1 € et 5000 €");

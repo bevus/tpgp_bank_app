@@ -5,12 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BankApp.Models;
 
 namespace BankApp.Controllers.Tests
 {
     [TestClass()]
     public class TransactionControllerTests
     {
+        public TransactionController TransactionController;
+        public ICustomerRepo customerRepo;
+        public IAccountRepo accountRepo;
+        public ITransactionRepo transactionRepo;
+        [TestInitialize]
+        public void Setup()
+        {
+            
+        }
         [TestMethod()]
         public void TransactionControllerTest()
         {

@@ -12,6 +12,41 @@ namespace BankApp.Controllers
         private BankContext db = new BankContext();
         private ICustomerRepo customerRepo;
         private IAccountRepo accountRepo;
+
+        public Customer ConnectedCustomer
+        {
+            get
+            {
+                if (Session?[Utils.SessionCustomer] == null)
+                    return null;
+                try
+                {
+                    return Session[Utils.SessionCustomer] as Customer;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            set { Session[Utils.SessionCustomer] = value; }
+        }
+
+        public Customer RIBCustomer
+        {
+            get
+            {
+                if (Session?[Utils.SessionRIBCustomer] == null)
+                    return null;
+                try
+                {
+                    return Session[Utils.SessionRIBCustomer] as Customer;
+                }
+                catch (Exception)
+                { return null; }
+            }
+            set { Session[Utils.SessionRIBCustomer] = value; }
+        }
+
         public CustomerController()
         {
             customerRepo = new EFCustomerRepo(db);
@@ -27,56 +62,42 @@ namespace BankApp.Controllers
         // GET: Customer
         public ActionResult Index()
         {
-            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
-            Session[Utils.SessionTransactionCustomer] = Session[Utils.SessionCustomer] as Customer;
+            var customer = ConnectedCustomer;
+            if (customer == null) return RedirectToAction("Index", "Home");
+            Session[Utils.SessionTransactionCustomer] = customer;
             return RedirectToAction("Transactions", "Transaction");
         }
 
         public ActionResult PrintRIBCustomer()
         {
-            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
-            Session[Utils.SessionRIBCustomer] = Session[Utils.SessionCustomer] as Customer;
+            var customer = ConnectedCustomer;
+            if (customer == null) return RedirectToAction("Index", "Home");
+            RIBCustomer = customer;
             return RedirectToAction("PrintRIB");
         }
 
         public ActionResult PrintRIB()
         {
-            if (Session[Utils.SessionRIBCustomer] == null) return RedirectToAction("Index", "Home");
-            var customer = Session[Utils.SessionRIBCustomer] as Customer;
-            return View(customer.Accounts);
+            if (RIBCustomer == null) return RedirectToAction("Index", "Home");
+            return View(accountRepo.GetAccounts().Where(a => a.Owner_ID == RIBCustomer.ID).ToList());
         }
         public ActionResult PrintRIBByAccount(int? id)
-        {   var error = false;
-            if (id == null)
+        {
+            if (id == null || RIBCustomer == null)
+                return Json(new {error = true, message = "Compte inconnu"});
+            var account = accountRepo.GetAccountByID((int)id);
+            if(account == null)
+                return Json(new { error = true, message = "Compte inconnu" });
+            if(account.Owner_ID != RIBCustomer.ID)
+                return Json(new { error = true, message = "Vous n'ests pas le propietaire de ce compte" });
+            return Json(new
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            try
-            {
-               var customer = Session[Utils.SessionRIBCustomer] as Customer;
-               var account = customer.Accounts.Find(c => c.ID == id);
-                if (account == null)
-                {
-                    return HttpNotFound();
-                }
-                return Json(new
-                {
-                    FirstName = customer.FirstName,
-                    LastName = customer.LastName,
-                    CustomerID = customer.ID,
-                    AccountNumber = customer.AccountNumber,
-                    BIC = account.BIC,
-                    IBAN = account.IBAN
-                }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception)
-            {
-                error = true;
-            }
-
-            if (error)
-                return Json(new { error = true, message = "adresse mail ou mot de passe incorrect" });
-            return Json(new { error = false });
+                RIBCustomer.FirstName,
+                RIBCustomer.LastName,
+                RIBCustomer.AccountNumber,
+                account.BIC,
+                account.IBAN
+            });
       }
 
         public ActionResult SimulateCredit()
@@ -89,38 +110,25 @@ namespace BankApp.Controllers
         {
             if(ModelState.IsValid)
             {
-                bankApp.CheckCreditServiceReference.Service1Client client = new bankApp.CheckCreditServiceReference.Service1Client();
-                int RequestedAmount = form.RequestedAmount;
-                int HouseholdIncomes = form.HouseholdIncomes;
-                int Contribution = form.Contribution;
-                int Duration = form.Duration;
-                if (client.CheckCredit(RequestedAmount, HouseholdIncomes, Contribution,Duration))
+                var client = new bankApp.CheckCreditServiceReference.Service1Client();
+                var requestedAmount = form.RequestedAmount;
+                var householdIncomes = form.HouseholdIncomes;
+                var contribution = form.Contribution;
+                var duration = form.Duration;
+                if (client.CheckCredit(requestedAmount, householdIncomes, contribution,duration))
                 {
                     TempData["notice"] = "Votre demende sera acceptée";
                     return RedirectToAction("SimulateCredit", "Customer");
                 }
-                else
-                {
-                    TempData["error"] = "Votre demende ne sera pas acceptée";
-                    //TempData["notice"] = "@<%= span style = color:Red;> Votre demende ne sera pas acceptée </ span >";
-                    return RedirectToAction("SimulateCredit", "Customer");
-                }
-
+                TempData["error"] = "Votre demende ne sera pas acceptée";
+                return RedirectToAction("SimulateCredit", "Customer");
             }
             return View();
         }
 
-        //public static bool CheckCredit(SimulateCredit form)
-        //{
-        //    double montantEmprunté = (form.RequestedAmount - form.Contribution) * ((1.05 * form.Duration) / (10 * 0.1));
-        //    if ((montantEmprunté / form.Duration) <= (form.HouseholdIncomes * 0.03))
-        //       return true;
-        //    return false;
-        //}
-
         public ActionResult Logout()
         {
-            Session[Utils.SessionCustomer] = null;
+            ConnectedCustomer = null;
             Session.Clear();
             return RedirectToAction("Index", "Home");
         }
@@ -128,17 +136,17 @@ namespace BankApp.Controllers
         [HttpGet]
         public ActionResult ChangePassword()
         {
-            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
+            if (ConnectedCustomer == null) return RedirectToAction("Index", "Home");
             return View();
         }
 
         [HttpPost]
         public ActionResult ChangePassword(ChangePasswordCustomerForm form)
         {
-            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
+            if (ConnectedCustomer == null) return RedirectToAction("Index", "Home");
             if (ModelState.IsValid)
             {
-                var customer = Session[Utils.SessionCustomer] as Customer;
+                var customer = ConnectedCustomer;
                 if(customer.Password != form.OldPassword)
                     ModelState.AddModelError("OldPassword", "Mot de passe incerrect");
                 if (ModelState.IsValid)

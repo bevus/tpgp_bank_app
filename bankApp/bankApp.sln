@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "ConsoleAppli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfSimulateCredit", "WcfSimulateCredit\WcfSimulateCredit.csproj", "{22D6A6F8-6975-436D-AB58-7A20542F41A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankAppUnitTest", "BankAppUnitTest\BankAppUnitTest.csproj", "{0D7EC802-493C-4E51-9810-69286F0FD527}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{22D6A6F8-6975-436D-AB58-7A20542F41A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22D6A6F8-6975-436D-AB58-7A20542F41A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22D6A6F8-6975-436D-AB58-7A20542F41A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D7EC802-493C-4E51-9810-69286F0FD527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D7EC802-493C-4E51-9810-69286F0FD527}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D7EC802-493C-4E51-9810-69286F0FD527}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D7EC802-493C-4E51-9810-69286F0FD527}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

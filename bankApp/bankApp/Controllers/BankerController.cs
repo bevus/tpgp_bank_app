@@ -32,14 +32,32 @@ namespace BankApp.Controllers
         // GET: Customer
         public ActionResult Index()
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             var banker = Session[Utils.SessionBanker] as Banker;
             return View(customerRepo.GetCustomers().Where(c => c.Banker_ID == banker.ID));
         }
 
+        private bool IsConnected
+        {
+            get
+            {
+                if (Session[Utils.SessionBanker] == null)
+                    return false;
+                try
+                {
+                    var customer = Session[Utils.SessionBanker] as Customer;
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
         public ActionResult Create()
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             return View(new AddCustomerForm
             {
                 Bankers = bankerRepo.GetBankers().Select(b => new SelectListItem
@@ -53,7 +71,7 @@ namespace BankApp.Controllers
         [HttpPost]
         public ActionResult Create(AddCustomerForm form)
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             if (ModelState.IsValid)
             {
                 validCreateCustomerForm(form);
@@ -98,7 +116,7 @@ namespace BankApp.Controllers
         // GET: CustomersGenerated/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -116,7 +134,7 @@ namespace BankApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             Customer customer = customerRepo.GetCustomerByID(id);
             db.Customers.Remove(customer);
             db.SaveChanges();
@@ -190,14 +208,14 @@ namespace BankApp.Controllers
         [HttpGet]
         public ActionResult ChangePassword()
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             return View();
         }
 
         [HttpPost]
         public ActionResult ChangePassword(ChangePasswordBankerForm form)
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             if (ModelState.IsValid)
             {
                 var banker = Session[Utils.SessionBanker] as Banker;
@@ -218,7 +236,7 @@ namespace BankApp.Controllers
 
         public ActionResult CustomerHistory(int? id)
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             var customer = ValideCustomerForBanker(id);
             if (customer == null)
                 return RedirectToAction("Index");
@@ -228,7 +246,7 @@ namespace BankApp.Controllers
 
         public ActionResult CustomerTrensfer(int? id)
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             var customer = ValideCustomerForBanker(id);
             if (customer == null)
                 return RedirectToAction("Index");
@@ -260,7 +278,7 @@ namespace BankApp.Controllers
 
         public ActionResult CustomerRib(int? id)
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             var customer = ValideCustomerForBanker(id);
             if (customer == null)
                 return RedirectToAction("Index");
@@ -270,7 +288,7 @@ namespace BankApp.Controllers
         [HttpGet]
         public ActionResult AddAccount(int? id)
         {
-            if(Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if(!IsConnected) return RedirectToAction("Index", "Home");
             var customer = ValideCustomerForBanker(id);
             if (customer == null)
                 return RedirectToAction("Index");
@@ -281,7 +299,7 @@ namespace BankApp.Controllers
         [HttpPost]
         public ActionResult AddAccount(AddAccountForm form)
         {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (!IsConnected) return RedirectToAction("Index", "Home");
             if (ModelState.IsValid)
             {
                 var customer = Session[Utils.SessionAddAccountCustomer] as Customer;
