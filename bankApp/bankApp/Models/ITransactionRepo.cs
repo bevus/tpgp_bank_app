@@ -2,7 +2,7 @@
 
 namespace BankApp.Models
 {
-    interface ITransactionRepo
+    public interface ITransactionRepo
     {
         IEnumerable<Transaction> GetTransactions();
         Transaction GetTransactionByID(int transactionId);

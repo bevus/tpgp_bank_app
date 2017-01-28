@@ -18,6 +18,13 @@ namespace BankApp.Controllers
             bankerRepo = new EFBankerRepo(context);
         }
 
+        public HomeController(ICustomerRepo customerRepo, IBankerRepo bankerRepo, BankContext context)
+        {
+            this.customerRepo = customerRepo;
+            this.bankerRepo = bankerRepo;
+            this.context = context;
+        }
+
         // GET: Home
         public ActionResult Index()
         {

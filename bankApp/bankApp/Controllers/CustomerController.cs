@@ -16,7 +16,14 @@ namespace BankApp.Controllers
         {
             customerRepo = new EFCustomerRepo(db);
             accountRepo = new EFAccountRepo(db);
-        }        
+        }
+
+        public CustomerController(ICustomerRepo customerRepo, IAccountRepo accountRepo)
+        {
+            this.customerRepo = customerRepo;
+            this.accountRepo = accountRepo;
+        }
+
         // GET: Customer
         public ActionResult Index()
         {
@@ -47,8 +54,7 @@ namespace BankApp.Controllers
             try
             {
                var customer = Session[Utils.SessionRIBCustomer] as Customer;
-             
-               var account =customer.Accounts.Find(c => c.ID==id);
+               var account = customer.Accounts.Find(c => c.ID == id);
                 if (account == null)
                 {
                     return HttpNotFound();

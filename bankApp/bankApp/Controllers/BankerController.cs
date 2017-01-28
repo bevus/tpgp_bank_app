@@ -14,11 +14,19 @@ namespace BankApp.Controllers
         private IAccountRepo accountRepo;
         private IBankerRepo bankerRepo;
 
+
         public BankerController()
         {
             customerRepo = new EFCustomerRepo(db);
             accountRepo = new EFAccountRepo(db);
             bankerRepo = new EFBankerRepo(db);
+        }
+
+        public BankerController(ICustomerRepo customerRepo, IAccountRepo accountRepo, IBankerRepo bankerRepo)
+        {
+            this.customerRepo = customerRepo;
+            this.accountRepo = accountRepo;
+            this.bankerRepo = bankerRepo;
         }
 
         // GET: Customer

@@ -17,11 +17,19 @@ namespace BankApp.Controllers
         public TransactionController()
         {   
             context = new BankContext();
-            context.Configuration.LazyLoadingEnabled = false;
             transactionRepo = new EFTransactionRepo(context);
             customerRepo = new EFCustomerRepo(context);
             accountRepo = new EFAccountRepo(context);
         }
+
+        public TransactionController(ICustomerRepo customerRepo, IAccountRepo accountRepo, ITransactionRepo transactionRepo, BankContext context)
+        {
+            this.customerRepo = customerRepo;
+            this.accountRepo = accountRepo;
+            this.transactionRepo = transactionRepo;
+            this.context = context;
+        }
+
 
         // GET: Transaction
         public ActionResult Index()

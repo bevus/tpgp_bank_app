@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankApp.Models
 {
-    interface IAccountRepo
+    public interface IAccountRepo
     {
         IEnumerable<Account> GetAccounts();
         Account GetAccountByID(int accountId);

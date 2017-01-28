@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankApp.Models
 {
-    interface IBankerRepo
+    public interface IBankerRepo
     {
         IEnumerable<Banker> GetBankers();
         Banker GetBankerByID(int bankerId);
