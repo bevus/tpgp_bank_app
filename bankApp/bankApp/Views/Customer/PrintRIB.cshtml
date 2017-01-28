@@ -1,93 +1,94 @@
 ﻿@model List<BankApp.Models.Account>
+    
+@{ ViewBag.Title = "Imprimer un RIB";}
+
+<h2>Imprimer un RIB</h2>
+<hr/>
+
 @using (Html.BeginForm())
 {
-    <div class="form-group">
-        @Html.Label("Comptes")<br />
-        @Html.DropDownList("Compte", Model.Select(account => new SelectListItem
-   {
-       Text = account.ID.ToString(),
-       Value = account.ID.ToString()
-   }).ToList(), new { @class = "form-control"})
-       
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.Label("Comptes", new { @class = "control-label col-md-2 col-md-offset-7" })
+            <div class="col-md-3">
+                @Html.DropDownList("Compte", Model.Select(account => new SelectListItem{
+                   Text = account.ID.ToString(),
+                   Value = account.ID.ToString()
+               }).ToList(), new { @class = "form-control pull-right" })
+            </div>
+        </div>
+
     </div>
 
     <div id="PrintRIB">
         <div id="divRIB">
-            <div class="jumbotron">
+            <div class="breadcrumb">
                 <div id="rib">
                     <h5>
-                        <b> Acount number : </b>
-                        <sapn id="acNum"></sapn>
-                    </h5>
-
-                    <h5>
-                        <b> Client id :  </b>
-                        <sapn id="idCustomer"></sapn>
+                        <b>Numéro client : </b>
+                        <span id="acNum"></span>
                     </h5>
                     <h5>
-                        <b>Client FHirstName :</b>
-                        <sapn id="fname"></sapn>
-                        <h5>
-                            <b>Client LastName :</b>
-                            <sapn id="lname"></sapn>
-                        </h5>
-                        <hr />
-                        <h5>
-                            <b>  BIC :</b>
-                            <sapn id="bic"></sapn>
-                            <b>   IBAN :</b>
-                            <sapn id="iban"></sapn>
-                        </h5>
+                        <b>Prénom :</b>
+                        <span id="fname"></span>
+                    </h5>
+                    <h5>
+                        <b>Nom :</b>
+                        <span id="lname"></span>
+                    </h5>
+                        <hr/>
+                    <h5>
+                        <b>BIC :</b>
+                        <span id="bic"></span>
+                    </h5>
+                    <h5>
+                        <b>IBAN :</b>
+                        <span id="iban"></span>
+                    </h5>
                 </div>
-                <button id="printRIB">Print RIB</button>
+                <button id="printRIB" class="btn btn-info">Print RIB</button>
             </div>
         </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.min.js"></script>
         <script>
             $(function () {
-                $("#divRIB").hide();
-                $("#printRIB").click(function (e) {
-                    e.preventDefault();
-                    Export();
-                })
-                $("#Compte").change(function (e) {
-
-                    e.preventDefault();
-                    $.get(
-                        "/Customer/PrintRIBByAccount",
-                        { id: $(this).val() },
-                        function (data) {
-                            $("#divRIB").show();
-                            if (data.FirstName) {
-                                $("#fname").text(data.FirstName);
-                            }
-                            if (data.LastName) {
-                                $("#lname").text(data.LastName);
-                            }
-                            if (data.AccountNumber) {
-                                $("#acNum").text(data.AccountNumber);
-                            }
-                            if (data.CustomerID) {
-                                $("#idCustomer").text(data.CustomerID);
-                            }
-                            if (data.BIC) {
-                                $("#ric").text(data.BIC);
-                            }
-                            if (data.IBAN) {
-                                $("#iban").text(data.IBAN);
-                            }
-                        },
-                        "json"
-                    );
-                });
+                var accountSelect = $("#Compte");
+                fillRib(accountSelect.val());
+                accountSelect.change(function (e) { e.preventDefault(); fillRib($(this).val()); });
+                $("#printRIB").click(function (e) { e.preventDefault(); Export(); });
             });
+
+            function fillRib(idAccount) {
+                $.post(
+                    "/Customer/PrintRIBByAccount",
+                    { id: idAccount },
+                    function (data) {
+                        if (data.FirstName) {
+                            $("#fname").text(data.FirstName);
+                        }
+                        if (data.LastName) {
+                            $("#lname").text(data.LastName);
+                        }
+                        if (data.AccountNumber) {
+                            $("#acNum").text(data.AccountNumber);
+                        }
+                        if (data.BIC) {
+                            $("#bic").text(data.BIC);
+                        }
+                        if (data.IBAN) {
+                            $("#iban").text(data.IBAN);
+                        }
+                    },
+                    "json"
+                );
+            }
      
             function Export() {
                 var pdf = new jsPDF('portrait', 'pt', 'a4');
                 pdf.text(50, 50, "RIB");
-                source = document.getElementById('PrintRIB').innerHTML;
-                specialElementHandlers = {
+                var source = document.getElementById('PrintRIB').innerHTML;
+                var specialElementHandlers = {
                     '#bypassme': function (element, renderer) {
                         return true
                     }
@@ -98,7 +99,6 @@
                     'elementHandlers': specialElementHandlers
                 });
                 pdf.save('RIB.pdf');
-
             }
         </script>
         }

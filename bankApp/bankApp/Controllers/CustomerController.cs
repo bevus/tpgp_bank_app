@@ -24,12 +24,14 @@ namespace BankApp.Controllers
             Session[Utils.SessionTransactionCustomer] = Session[Utils.SessionCustomer] as Customer;
             return RedirectToAction("Transactions", "Transaction");
         }
+
         public ActionResult PrintRIBCustomer()
         {
             if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
             Session[Utils.SessionRIBCustomer] = Session[Utils.SessionCustomer] as Customer;
             return RedirectToAction("PrintRIB");
         }
+
         public ActionResult PrintRIB()
         {
             if (Session[Utils.SessionRIBCustomer] == null) return RedirectToAction("Index", "Home");
@@ -38,33 +40,28 @@ namespace BankApp.Controllers
         }
         public ActionResult PrintRIBByAccount(int? id)
         {   var error = false;
-            var context = new BankContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             try
             {
-               var customer = Session[Utils.SessionCustomer] as Customer;
+               var customer = Session[Utils.SessionRIBCustomer] as Customer;
              
                var account =customer.Accounts.Find(c => c.ID==id);
                 if (account == null)
                 {
                     return HttpNotFound();
                 }
-                else
-                { 
-                    return Json(new
-                    {
-                        FirstName = customer.FirstName,
-                        LastName = customer.LastName,
-                        CustomerID = customer.ID,
-                        AccountNumber = customer.AccountNumber,
-                        BIC = account.BIC,
-                        IBAN = account.IBAN
-                    },JsonRequestBehavior.AllowGet);
-                }
-
+                return Json(new
+                {
+                    FirstName = customer.FirstName,
+                    LastName = customer.LastName,
+                    CustomerID = customer.ID,
+                    AccountNumber = customer.AccountNumber,
+                    BIC = account.BIC,
+                    IBAN = account.IBAN
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)
             {
@@ -114,21 +111,6 @@ namespace BankApp.Controllers
         //       return true;
         //    return false;
         //}
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult PrintPDF([Bind(Include = "Id,Solde")] Account account)
-        {
-            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
-            if (ModelState.IsValid)
-            {
-                db.Accounts.Add(account);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(account);
-        }
 
         public ActionResult Logout()
         {
