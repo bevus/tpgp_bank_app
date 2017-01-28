@@ -32,8 +32,8 @@ namespace BankApp.Controllers
         [HttpGet]
         public ActionResult Transfer()
         {
-            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
-            var customer = Session[Utils.SessionCustomer] as Customer;
+            if (Session[Utils.SessionTransactionCustomer] == null) return RedirectToAction("Index", "Home");
+            var customer = Session[Utils.SessionTransactionCustomer] as Customer;
             return View(getSelectableAccounts(customer));
         }
 

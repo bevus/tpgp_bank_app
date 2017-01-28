@@ -34,10 +34,10 @@
                 @item.LastName
             </td>
             <td>
-                @Html.ActionLink("Historique", "CustomerHistory", "Banker", item.ID) |
-                @Html.ActionLink("Imprimer RIB", "CustomerRIB", "Banker", item.ID) |
-                @Html.ActionLink("Virement", "CustomerTrensfer", "Banker", item.ID) |
-                @Html.ActionLink("Ajouter un compte", "AddAccount", "Banker", item.ID)
+                @Html.ActionLink("Historique", "CustomerHistory", new {id = item.ID }) |
+                @Html.ActionLink("Imprimer RIB", "CustomerRIB", new {id = item.ID }) |
+                @Html.ActionLink("Virement", "CustomerTrensfer", new { id = item.ID }) |
+                @Html.ActionLink("Ajouter un compte", "AddAccount", new { id = item.ID })
             </td>
         </tr>
     }

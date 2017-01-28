@@ -149,32 +149,6 @@ namespace BankApp.Controllers
             return View(customer);
         }
 
-        public ActionResult PrintRIB()
-        {
-            db.Configuration.LazyLoadingEnabled = false;
-
-            Account account = db.Accounts.Find(2);
-            //Include("Customer").
-            Customer customer = db.Customers.Find(account.Owner_ID);
-            var tuple = new Tuple<Account, Customer>(account, customer);
-            return View(tuple);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult PrintPDF([Bind(Include = "Id,Solde")] Account account)
-        {
-            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
-            if (ModelState.IsValid)
-            {
-                db.Accounts.Add(account);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(account);
-        }
-
         private void validCreateCustomerForm(AddCustomerForm form)
         {
             if (form.Solde < 50)
@@ -230,19 +204,53 @@ namespace BankApp.Controllers
         public ActionResult CustomerHistory(int? id)
         {
             if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            var customer = ValideCustomerForBanker(id);
+            if (customer == null)
+                return RedirectToAction("Index");
+            Session[Utils.SessionTransactionCustomer] = customer;
+            return RedirectToAction("Transactions", "Transaction");
+        }
+
+        public ActionResult CustomerTrensfer(int? id)
+        {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            var customer = ValideCustomerForBanker(id);
+            if (customer == null)
+                return RedirectToAction("Index");
+            Session[Utils.SessionTransactionCustomer] = customer;
+            return RedirectToAction("Transfer", "Transaction");
+        }
+
+        private Customer ValideCustomerForBanker(int? id)
+        {
             if (id == null)
             {
                 TempData["error"] = "compte spécifié";
-                return RedirectToAction("Index");
+                return null;
             }
             var banker = Session[Utils.SessionBanker] as Banker;
-            var customer = customerRepo.GetCustomerByID((int)id);
+            var customer = customerRepo.GetCustomerByID((int) id);
             if (customer == null)
             {
                 TempData["error"] = "compte invalide";
-                return RedirectToAction("Index");
+                return null;
             }
-            return View();
+            if (customer.Banker_ID != banker.ID)
+            {
+                TempData["error"] = "ce client est géré par un autre banquier";
+                return null;
+            }
+            return customer;
+        }
+
+        public ActionResult CustomerRib(int? id)
+        {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            var customer = ValideCustomerForBanker(id);
+            if (customer == null)
+                return RedirectToAction("Index");
+            Session[Utils.SessionRIBCustomer] = customer;
+            return RedirectToAction("PrintRIB", "Customer");
         }
     }
 }
