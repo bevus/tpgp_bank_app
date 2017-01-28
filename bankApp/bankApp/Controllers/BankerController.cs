@@ -25,7 +25,8 @@ namespace BankApp.Controllers
         public ActionResult Index()
         {
             if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
-            return View(customerRepo.GetCustomers());
+            var banker = Session[Utils.SessionBanker] as Banker;
+            return View(customerRepo.GetCustomers().Where(c => c.Banker_ID == banker.ID));
         }
 
         public ActionResult Create()
@@ -196,6 +197,52 @@ namespace BankApp.Controllers
         {
             Session[Utils.SessionBanker] = null;
             return RedirectToAction("Index", "Home");
+        }
+        [HttpGet]
+        public ActionResult ChangePassword()
+        {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePasswordBankerForm form)
+        {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (ModelState.IsValid)
+            {
+                var banker = Session[Utils.SessionBanker] as Banker;
+                if (banker.Password != form.OldPassword)
+                    ModelState.AddModelError("OldPassword", "Mot de passe incerrect");
+                if (ModelState.IsValid)
+                {
+                    banker.Password = form.NewPassword;
+                    bankerRepo.UpdateBanker(banker);
+                    bankerRepo.Save();
+                    Session[Utils.SessionBanker] = banker;
+                    TempData["notice"] = "Mot de passe mis à jour";
+                    return RedirectToAction("Index", "Banker");
+                }
+            }
+            return View();
+        }
+
+        public ActionResult CustomerHistory(int? id)
+        {
+            if (Session[Utils.SessionBanker] == null) return RedirectToAction("Index", "Home");
+            if (id == null)
+            {
+                TempData["error"] = "compte spécifié";
+                return RedirectToAction("Index");
+            }
+            var banker = Session[Utils.SessionBanker] as Banker;
+            var customer = customerRepo.GetCustomerByID((int)id);
+            if (customer == null)
+            {
+                TempData["error"] = "compte invalide";
+                return RedirectToAction("Index");
+            }
+            return View();
         }
     }
 }

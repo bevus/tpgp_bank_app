@@ -90,5 +90,34 @@ namespace BankApp.Controllers
             Session[Utils.SessionCustomer] = null;
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        public ActionResult ChangePassword()
+        {
+            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePasswordCustomerForm form)
+        {
+            if (Session[Utils.SessionCustomer] == null) return RedirectToAction("Index", "Home");
+            if (ModelState.IsValid)
+            {
+                var customer = Session[Utils.SessionCustomer] as Customer;
+                if(customer.Password != form.OldPassword)
+                    ModelState.AddModelError("OldPassword", "Mot de passe incerrect");
+                if (ModelState.IsValid)
+                {
+                    customer.Password = form.NewPassword;
+                    customerRepo.UpdateCustomer(customer);
+                    customerRepo.Save();
+                    Session[Utils.SessionCustomer] = customer;
+                    TempData["notice"] = "Mot de passe mis à jour";
+                    return RedirectToAction("Index", "Customer");
+                }
+            }
+            return View();
+        }
     }
 }

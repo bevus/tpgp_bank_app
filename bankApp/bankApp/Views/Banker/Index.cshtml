@@ -1,46 +1,43 @@
 ﻿@model IEnumerable<BankApp.Models.Customer>
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
 
 @{
-    ViewBag.Title = "Espace banquier";
+    ViewBag.Title = "Liste des clients";
 }
 
-<h2>Espace banquier</h2>
+<h2>Liste des clients</h2>
 <p>
     @Html.ActionLink("Ajouter un client ", "Create", "Banker")
 </p>
 <table class="table">
     <tr>
-
         <th>
-            @Html.DisplayNameFor(model => model.FirstName)
+            Numéro client
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LastName)
+            Prenom
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Password)
+            Nom
         </th>
         <th></th>
     </tr>
     @foreach (var item in Model)
     {
         <tr>
-
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
+                @item.AccountNumber
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastName)
+                @item.FirstName
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Password)
+                @item.LastName
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                @Html.ActionLink("Historique", "CustomerHistory", "Banker", item.ID) |
+                @Html.ActionLink("Imprimer RIB", "CustomerRIB", "Banker", item.ID) |
+                @Html.ActionLink("Virement", "CustomerTrensfer", "Banker", item.ID) |
+                @Html.ActionLink("Ajouter un compte", "AddAccount", "Banker", item.ID)
             </td>
         </tr>
     }
