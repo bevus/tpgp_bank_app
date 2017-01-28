@@ -44,6 +44,7 @@ namespace BankApp.Controllers
                         ModelState.AddModelError("password", "mot de passe incorrect");
                     if (ModelState.IsValid)
                     {
+                        Session.Clear();
                         Session[Utils.SessionCustomer] = customer;
                         return RedirectToAction("Index", "Customer");
                     }
@@ -76,6 +77,7 @@ namespace BankApp.Controllers
                         ModelState.AddModelError("password", "mot de passe incorrect");
                     if (ModelState.IsValid)
                     {
+                        Session.Clear();
                         Session[Utils.SessionBanker] = banker;
                         return RedirectToAction("Index", "Banker");
                     }

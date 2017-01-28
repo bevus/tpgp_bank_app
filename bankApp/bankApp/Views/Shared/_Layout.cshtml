@@ -19,7 +19,18 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="#" class="navbar-brand">Bank Application</a>
+                @if (Session[Utils.SessionCustomer] != null)
+                {
+                    @Html.ActionLink("Bank Application", "Index", "Customer", new { area = "" }, new { @class = "navbar-brand" })
+                }
+                else if (Session[Utils.SessionBanker] != null)
+                {
+                    @Html.ActionLink("Bank Application", "Index", "Banker", new { area = "" }, new { @class = "navbar-brand" })
+                }
+                else
+                {
+                    @Html.ActionLink("Bank Application", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                }
             </div>
             <div class="navbar-collapse collapse">
                     @if (Session[Utils.SessionCustomer] != null)

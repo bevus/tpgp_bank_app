@@ -115,6 +115,7 @@ namespace BankApp.Controllers
         public ActionResult Logout()
         {
             Session[Utils.SessionCustomer] = null;
+            Session.Clear();
             return RedirectToAction("Index", "Home");
         }
 

@@ -176,6 +176,7 @@ namespace BankApp.Controllers
         public ActionResult Logout()
         {
             Session[Utils.SessionBanker] = null;
+            Session.Clear();
             return RedirectToAction("Index", "Home");
         }
         [HttpGet]
