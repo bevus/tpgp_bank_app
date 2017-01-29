@@ -100,8 +100,8 @@
     <Compile Include="Controllers\BankerControllerTests.cs" />
     <Compile Include="Controllers\CustomerControllerTests.cs" />
     <Compile Include="Controllers\HomeControllerTests.cs" />
+    <Compile Include="Controllers\TestUtils.cs" />
     <Compile Include="Controllers\TransactionControllerTests.cs" />
-    <Compile Include="HttpSessionMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

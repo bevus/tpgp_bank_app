@@ -240,6 +240,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Util\ICredit.cs" />
+    <Compile Include="Util\WebServiceCredit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />

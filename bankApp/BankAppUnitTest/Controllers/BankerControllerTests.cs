@@ -44,8 +44,8 @@ namespace BankApp.Controllers.Tests
             };
             var accounts2 = new List<Account>
             {
-                new Account {BIC = "BIC-1", IBAN = "IBAN-1", ID = 1, Owner_ID = 2, Solde = 2000},
-                new Account {BIC = "BIC-1", IBAN = "IBAN-2", ID = 2, Owner_ID = 2, Solde = 0}
+                new Account {BIC = "BIC-1", IBAN = "IBAN-3", ID = 3, Owner_ID = 2, Solde = 2000},
+                new Account {BIC = "BIC-1", IBAN = "IBAN-4", ID = 4, Owner_ID = 2, Solde = 0}
             };
 
             customers = new List<Customer>
@@ -68,111 +68,211 @@ namespace BankApp.Controllers.Tests
             };
             BankController.Session[Utils.SessionBanker] = bankers[0];
         }
+
         [TestMethod()]
         public void BankerControllerTest()
         {
-            
-        }
-
-        [TestMethod()]
-        public void IndexTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void CreateTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void CreateTest1()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void DeleteTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void DeleteConfirmedTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void EditTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void EditTest1()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void LogoutTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void ChangePasswordTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void ChangePasswordTest1()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void CustomerHistoryTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void CustomerTrensferTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void CustomerRibTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void AddAccountTest()
-        {
-            
-        }
-
-        [TestMethod()]
-        public void AddAccountTest1()
-        {
-            
+            var banker = new BankerController();
+            Assert.IsNotNull(banker);
         }
 
         [TestMethod]
         public void IndexTestConnceted()
-        {
-            //Arrange
+        {   //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
             CustomerRepo.Setup(r => r.GetCustomers()).Returns(customers);
             //Act
             var result = BankController.Index();
             //Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
+        }
+
+
+
+        [TestMethod]
+        public void IndexTestNotConnceted()
+        {
+            BankController.Session[Utils.SessionBanker] = null;
+            var result = BankController.Index();
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
+        }
+
+        [TestMethod()]
+        public void CreateTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            BankerRepo.Setup(r => r.GetBankers()).Returns(bankers);
+            //Act
+            var result = BankController.Create();
+            var vResult = (ViewResult)result;
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            Assert.IsInstanceOfType(vResult.Model, typeof(AddCustomerForm));
+        }
+
+        [TestMethod()]
+        public void CreatePostTestModelStateIsValideSessionValide()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            AccountRepo.Setup(r => r.InsertAccount(accounts[0]));
+            CustomerRepo.Setup(r => r.InsertCustomer(customers[0]));
+            CustomerRepo.Setup(r => r.Save());
+            //Act
+            var result = BankController.Create();
+            var vResult = (ViewResult)result;
+            ////Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+
+        }
+
+        [TestMethod()]
+        public void DeleteTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            CustomerRepo.Setup(r => r.GetCustomerByID(customers[0].ID)).Returns(customers[0]);
+            //Act
+            var result = BankController.Delete(customers[0].ID);
+            var vResult = (ViewResult)result;
+            ////Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            Assert.IsInstanceOfType(vResult.Model, typeof(Customer));
+            Assert.AreEqual(vResult.Model, customers[0]);
+        }
+
+
+
+        [TestMethod()]
+        public void LogoutTest()
+        {   //Act
+            var result = BankController.Logout();
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
+        }
+
+        [TestMethod()]
+        public void ChangePasswordTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            //Act
+            var result = BankController.ChangePassword();
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+        }
+
+        [TestMethod()]
+        public void ChangePasswordOldAndConfirmedAreEquelTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            ChangePasswordBankerForm form = new ChangePasswordBankerForm();
+            form.OldPassword = "123456";
+            BankerRepo.Setup(r => r.UpdateBanker(bankers[0]));
+            BankerRepo.Setup(r => r.Save());
+            //Act
+            var result = BankController.ChangePassword(form);
+            //var vResult = (ViewResult)result;
+            ////Assert
+            Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
+
+        }
+        [TestMethod()]
+        public void ChangePasswordOldAndConfirmedAreNotEquelTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            ChangePasswordBankerForm form = new ChangePasswordBankerForm();
+            form.OldPassword = "876544";
+            BankerRepo.Setup(r => r.UpdateBanker(bankers[0]));
+            BankerRepo.Setup(r => r.Save());
+            //Act
+            var result = BankController.ChangePassword(form);
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+        }
+
+        [TestMethod()]
+        public void CustomerHistoryTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            CustomerRepo.Setup(r => r.GetCustomerByID(bankers[0].ID)).Returns(customers[0]);
+            //Act
+            var result = BankController.CustomerHistory(customers[0].ID) as RedirectToRouteResult;
+            //Assert
+            Assert.AreEqual(result.RouteValues["action"], "Transactions");
+            Assert.AreEqual(result.RouteValues["controller"], "Transaction");
+        }
+
+        [TestMethod()]
+        public void CustomerTrensferTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            CustomerRepo.Setup(r => r.GetCustomerByID(bankers[0].ID)).Returns(customers[0]);
+            //Act
+            var result = BankController.CustomerTrensfer(customers[0].ID) as RedirectToRouteResult;
+            //Assert
+            Assert.AreEqual(result.RouteValues["action"], "Transfer");
+            Assert.AreEqual(result.RouteValues["controller"], "Transaction");
+        }
+
+        [TestMethod()]
+        public void CustomerRibTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            CustomerRepo.Setup(r => r.GetCustomerByID(bankers[0].ID)).Returns(customers[0]);
+            //Act
+            var result = BankController.CustomerRib(customers[0].ID) as RedirectToRouteResult;
+            //Assert
+            Assert.AreEqual(result.RouteValues["action"], "PrintRIB");
+            Assert.AreEqual(result.RouteValues["controller"], "Customer");
+        }
+
+        [TestMethod()]
+        public void AddAccountTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            CustomerRepo.Setup(r => r.GetCustomerByID(bankers[0].ID)).Returns(customers[0]);
+            //Act
+            var result = BankController.AddAccount(customers[0].ID);
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+        }
+
+        [TestMethod()]
+        public void AddAccountTest1()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            AddAccountForm form = new AddAccountForm();
+            form.BIC = "23YT";
+            form.IBAN = "FR9552102565062826225126616";
+            CustomerRepo.Setup(r => r.GetCustomerByID(bankers[0].ID)).Returns(customers[0]);
+            CustomerRepo.Setup(r => r.Save());
+            //Act
+            var result = BankController.AddAccount(form) as RedirectToRouteResult;
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
+        }
+
+        [TestMethod()]
+        public void ValideCustomerForBankerTest()
+        {
+            //Arrange
+            BankController.Session[Utils.SessionBanker] = bankers[0];
+            CustomerRepo.Setup(r => r.GetCustomerByID(bankers[0].ID)).Returns(customers[0]);
+            //Act
+            var result = BankController.ValideCustomerForBanker(bankers[0].ID);
+            //Assert
+            Assert.AreEqual(result.ID, bankers[0].ID);
+
         }
     }
 }

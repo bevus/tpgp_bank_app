@@ -32,7 +32,12 @@ namespace BankApp.Controllers
             }
             set { Session[Utils.SessionCustomer] = value; }
         }
-
+        public CustomerController(ICustomerRepo customerRepo, IAccountRepo accountRepo, ICredit credit)
+        {
+            this.customerRepo = customerRepo;
+            this.accountRepo = accountRepo;
+            this.credit = credit;
+        }
         public Customer RIBCustomer
         {
             get
@@ -54,13 +59,6 @@ namespace BankApp.Controllers
             customerRepo = new EFCustomerRepo(db);
             accountRepo = new EFAccountRepo(db);
             credit = new WebServiceCredit();
-        }
-
-        public CustomerController(ICustomerRepo customerRepo, IAccountRepo accountRepo, ICredit credit)
-        {
-            this.customerRepo = customerRepo;
-            this.accountRepo = accountRepo;
-            this.credit = credit;
         }
 
         // GET: Customer
@@ -88,12 +86,12 @@ namespace BankApp.Controllers
         public ActionResult PrintRIBByAccount(int? id)
         {
             if (id == null || RIBCustomer == null)
-                return Json(new {error = true, message = "Compte inconnu"});
-            var account = accountRepo.GetAccountByID((int)id);
-            if(account == null)
                 return Json(new { error = true, message = "Compte inconnu" });
-            if(account.Owner_ID != RIBCustomer.ID)
-                return Json(new { error = true, message = "Vous n'ests pas le propietaire de ce compte" });
+            var account = accountRepo.GetAccountByID((int)id);
+            if (account == null)
+                return Json(new { error = true, message = "Compte inconnu" });
+            if (account.Owner_ID != RIBCustomer.ID)
+                return Json(new { error = true, message = "Vous n'êtes pas le propietaire de ce compte" });
             return Json(new
             {
                 RIBCustomer.FirstName,
@@ -102,25 +100,26 @@ namespace BankApp.Controllers
                 account.BIC,
                 account.IBAN
             });
-      }
+        }
 
         public ActionResult SimulateCredit()
         {
             return View();
         }
-        
+
         [HttpPost]
         public ActionResult SimulateCredit(SimulateCredit form)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 if (credit.CheckCredit(form.RequestedAmount, form.HouseholdIncomes, form.Contribution, form.Duration))
                 {
                     TempData["notice"] = "Votre demende sera acceptée";
-                    return RedirectToAction("SimulateCredit", "Customer");
                 }
-                TempData["error"] = "Votre demende ne sera pas acceptée";
-                return RedirectToAction("SimulateCredit", "Customer");
+                else
+                {
+                    TempData["error"] = "Votre demende ne sera pas acceptée";
+                }
             }
             return View();
         }
@@ -146,7 +145,7 @@ namespace BankApp.Controllers
             if (ModelState.IsValid)
             {
                 var customer = ConnectedCustomer;
-                if(customer.Password != form.OldPassword)
+                if (customer.Password != form.OldPassword)
                     ModelState.AddModelError("OldPassword", "Mot de passe incerrect");
                 if (ModelState.IsValid)
                 {
