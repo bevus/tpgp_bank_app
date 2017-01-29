@@ -22,7 +22,6 @@ namespace BankApp.Controllers
         {
             this.customerRepo = customerRepo;
             this.bankerRepo = bankerRepo;
-            this.context = context;
         }
 
         // GET: Home

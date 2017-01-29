@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using bankApp.Util;
 
 namespace BankApp.Controllers
 {
@@ -12,6 +13,7 @@ namespace BankApp.Controllers
         private BankContext db = new BankContext();
         private ICustomerRepo customerRepo;
         private IAccountRepo accountRepo;
+        private ICredit credit;
 
         public Customer ConnectedCustomer
         {
@@ -51,12 +53,14 @@ namespace BankApp.Controllers
         {
             customerRepo = new EFCustomerRepo(db);
             accountRepo = new EFAccountRepo(db);
+            credit = new WebServiceCredit();
         }
 
-        public CustomerController(ICustomerRepo customerRepo, IAccountRepo accountRepo)
+        public CustomerController(ICustomerRepo customerRepo, IAccountRepo accountRepo, ICredit credit)
         {
             this.customerRepo = customerRepo;
             this.accountRepo = accountRepo;
+            this.credit = credit;
         }
 
         // GET: Customer
@@ -110,12 +114,7 @@ namespace BankApp.Controllers
         {
             if(ModelState.IsValid)
             {
-                var client = new bankApp.CheckCreditServiceReference.Service1Client();
-                var requestedAmount = form.RequestedAmount;
-                var householdIncomes = form.HouseholdIncomes;
-                var contribution = form.Contribution;
-                var duration = form.Duration;
-                if (client.CheckCredit(requestedAmount, householdIncomes, contribution,duration))
+                if (credit.CheckCredit(form.RequestedAmount, form.HouseholdIncomes, form.Contribution, form.Duration))
                 {
                     TempData["notice"] = "Votre demende sera acceptée";
                     return RedirectToAction("SimulateCredit", "Customer");

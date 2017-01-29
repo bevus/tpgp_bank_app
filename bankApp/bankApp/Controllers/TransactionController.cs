@@ -120,7 +120,7 @@ namespace BankApp.Controllers
                 ModelState.AddModelError("IBAN", "Compte source et distination son les memes");
             if (sourceAccount.Solde - trensferFrom.Amount < 0)
                 ModelState.AddModelError("Amount", "Solde insufissant pour effectuer ce virement");
-        }   
+        }
 
         private TrensferFrom getSelectableAccounts(Customer customer)
         {
@@ -138,7 +138,7 @@ namespace BankApp.Controllers
                 TempData["error"] = "Client inconnu";
                 return RedirectToAction("Index", "Home");
             };
-            var customer = TransactionCustomer;
+            var customer = customerRepo.GetCustomerByID(TransactionCustomer.ID);
             ViewBag.Solde = 0;
             foreach (var account in customer.Accounts)
             {
@@ -150,5 +150,5 @@ namespace BankApp.Controllers
                     (DateTime.Now - t.Date).TotalDays < 30
                 ).OrderByDescending(t => t.Date).ToList());
         }
-    }
+    }   
 }
