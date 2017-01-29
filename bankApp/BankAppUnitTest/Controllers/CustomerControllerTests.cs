@@ -78,43 +78,40 @@ namespace BankApp.Controllers.Tests
 
         [TestMethod()]
         public void IndexTest()
-        {
-            //Arrange
+        {//Arrange
             CustomerController.Session[Utils.SessionCustomer] = customers[0];
             //Act
             var result = CustomerController.Index() as RedirectToRouteResult;
             //Assert
             Assert.AreEqual(result.RouteValues["action"], "Transactions");
             Assert.AreEqual(result.RouteValues["controller"], "Transaction");
-        }
+             }
 
         [TestMethod()]
         public void PrintRIBCustomerTest()
-        {
-            //Arrange
+        { //Arrange
             CustomerController.Session[Utils.SessionCustomer] = customers[0];
             //Act
             var result = CustomerController.PrintRIBCustomer() as RedirectToRouteResult;
             //Assert
             Assert.AreEqual(result.RouteValues["action"], "PrintRIB");
-            }
-
+         }
+      
         [TestMethod()]
         public void PrintRIBTest()
         {
-            //Arrange
+           //Arrange
             CustomerController.Session[Utils.SessionRIBCustomer] = customers[0];
             //Act
             AccountRepo.Setup(r => r.GetAccounts()).Returns(accounts);
             var result = CustomerController.PrintRIB();
             //Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
+      }
         
         [TestMethod()]
         public void PrintRIBByAccountTest()
         {
-
             //Arrange
             CustomerController.Session[Utils.SessionRIBCustomer] = customers[0];
             //Act
@@ -132,7 +129,7 @@ namespace BankApp.Controllers.Tests
             if (property == null)
                 throw new Exception();
             return (T)property.GetValue(jsonResult.Data,null);
-        }
+         }
 
         [TestMethod()]
         public void SimulateCreditTest()
@@ -148,11 +145,12 @@ namespace BankApp.Controllers.Tests
             var result = CustomerController.SimulateCredit(form) as RedirectToRouteResult;
             //Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
-        }
+         }
 
         [TestMethod()]
         public void LogoutTest()
-        {   //Act
+        { 
+            //Act
             var result = CustomerController.Logout();
             //Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
@@ -196,7 +194,6 @@ namespace BankApp.Controllers.Tests
             var result = CustomerController.ChangePassword(form);
             //Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-
-        }
+         }
     }
 }

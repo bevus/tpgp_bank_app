@@ -51,7 +51,7 @@ namespace BankApp.Controllers.Tests
             customers = new List<Customer>
             {
                 new Customer {FirstName = "fn-1", LastName = "ln-1", AccountNumber = "1111", ID = 1, Banker_ID = 1, Accounts = accounts1, Password = "123456"},
-                new Customer {FirstName = "fn-2", LastName = "ln-2", AccountNumber = "2222", ID = 1, Banker_ID = 1, Accounts = accounts2, Password = "123456"},
+                new Customer {FirstName = "fn-2", LastName = "ln-2", AccountNumber = "2222", ID = 1, Banker_ID = 2, Accounts = accounts2, Password = "123456"},
             };
 
             bankers = new List<Banker>
@@ -66,42 +66,41 @@ namespace BankApp.Controllers.Tests
                 new AccountToAcountTransaction {Account = accounts1[0], Amount = 5000, Date = DateTime.Now, TransactionType = TransactionType.CREDIT, Title = "virement - hacene kedjar" },
                 new AccountToAcountTransaction {Account = accounts2[0], Amount = 1260, Date = DateTime.Now, TransactionType = TransactionType.DEBIT, Title = "virement"}
             };
-
+            BankController.Session[Utils.SessionBanker] = bankers[0];
         }
+           
         [TestMethod()]
         public void BankerControllerTest()
         {
             var banker = new BankerController();
             Assert.IsNotNull(banker);
-        }
-
+         }
 
         [TestMethod]
         public void IndexTestConnceted()
-        {
-            //Arrange
+        {   //Arrange
             BankController.Session[Utils.SessionBanker] = bankers[0];
             CustomerRepo.Setup(r => r.GetCustomers()).Returns(customers);
             //Act
             var result = BankController.Index();
             //Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
+      }
 
 
 
         [TestMethod]
         public void IndexTestNotConnceted()
         {
-            var result = BankController.Index();
+          var result = BankController.Index();
             //Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
-        }
+         }
 
         [TestMethod()]
         public void CreateTest()
         {
-            //Arrange
+           //Arrange
             BankController.Session[Utils.SessionBanker] = bankers[0];
             BankerRepo.Setup(r => r.GetBankers()).Returns(bankers);
             //Act
@@ -110,7 +109,7 @@ namespace BankApp.Controllers.Tests
             //Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             Assert.IsInstanceOfType(vResult.Model, typeof(AddCustomerForm));
-        }
+         }
 
         [TestMethod()]
         public void CreatePostTestModelStateIsValideSessionValide()
@@ -141,7 +140,7 @@ namespace BankApp.Controllers.Tests
             Assert.IsInstanceOfType(result, typeof(ViewResult));
             Assert.IsInstanceOfType(vResult.Model, typeof(Customer));
             Assert.AreEqual(vResult.Model, customers[0]);
-        }
+     }
 
 
 
@@ -151,7 +150,7 @@ namespace BankApp.Controllers.Tests
             var result = BankController.Logout();
             //Assert
             Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
-        }
+   }
 
         [TestMethod()]
         public void ChangePasswordTest()
@@ -193,8 +192,7 @@ namespace BankApp.Controllers.Tests
             var result = BankController.ChangePassword(form);
            //Assert
             Assert.IsInstanceOfType(result, typeof(ViewResult));
-
-        }
+     }
 
         [TestMethod()]
         public void CustomerHistoryTest()
@@ -207,7 +205,7 @@ namespace BankApp.Controllers.Tests
             //Assert
             Assert.AreEqual(result.RouteValues["action"], "Transactions");
             Assert.AreEqual(result.RouteValues["controller"], "Transaction");
-        }
+      }
 
         [TestMethod()]
         public void CustomerTrensferTest()
@@ -220,7 +218,7 @@ namespace BankApp.Controllers.Tests
             //Assert
             Assert.AreEqual(result.RouteValues["action"], "Transfer");
             Assert.AreEqual(result.RouteValues["controller"], "Transaction");
-        }
+     }
 
         [TestMethod()]
         public void CustomerRibTest()
@@ -233,7 +231,7 @@ namespace BankApp.Controllers.Tests
             //Assert
             Assert.AreEqual(result.RouteValues["action"], "PrintRIB");
             Assert.AreEqual(result.RouteValues["controller"], "Customer");
-        }
+       }
 
         [TestMethod()]
         public void AddAccountTest()
@@ -245,13 +243,12 @@ namespace BankApp.Controllers.Tests
             var result = BankController.AddAccount(customers[0].ID);
             //Assert
             Assert.IsInstanceOfType(result,typeof(ViewResult));
-
-        }
+            }
 
         [TestMethod()]
         public void AddAccountTest1()
         {
-            //Arrange
+             //Arrange
             BankController.Session[Utils.SessionBanker] = bankers[0];
             AddAccountForm form = new AddAccountForm();
             form.BIC="23YT";
@@ -274,6 +271,7 @@ namespace BankApp.Controllers.Tests
             var result = BankController.ValideCustomerForBanker(bankers[0].ID);
             //Assert
             Assert.AreEqual(result.ID,bankers[0].ID);
+
         }
     }
 }
