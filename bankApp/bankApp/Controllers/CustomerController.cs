@@ -12,6 +12,7 @@ namespace BankApp.Controllers
         private BankContext db = new BankContext();
         private ICustomerRepo customerRepo;
         private IAccountRepo accountRepo;
+        private IBankerRepo bankerRepo;
 
         public Customer ConnectedCustomer
         {
@@ -30,7 +31,12 @@ namespace BankApp.Controllers
             }
             set { Session[Utils.SessionCustomer] = value; }
         }
-
+        public CustomerController(ICustomerRepo customerRepo, IAccountRepo accountRepo, IBankerRepo bankerRepo)
+        {
+            this.customerRepo = customerRepo;
+            this.accountRepo = accountRepo;
+            this.bankerRepo = bankerRepo;
+        }
         public Customer RIBCustomer
         {
             get
@@ -89,7 +95,7 @@ namespace BankApp.Controllers
             if(account == null)
                 return Json(new { error = true, message = "Compte inconnu" });
             if(account.Owner_ID != RIBCustomer.ID)
-                return Json(new { error = true, message = "Vous n'ests pas le propietaire de ce compte" });
+                return Json(new { error = true, message = "Vous n'êtes pas le propietaire de ce compte" });
             return Json(new
             {
                 RIBCustomer.FirstName,
@@ -115,13 +121,16 @@ namespace BankApp.Controllers
                 var householdIncomes = form.HouseholdIncomes;
                 var contribution = form.Contribution;
                 var duration = form.Duration;
-                if (client.CheckCredit(requestedAmount, householdIncomes, contribution,duration))
+                if (client.CheckCredit(requestedAmount, householdIncomes, contribution, duration))
                 {
                     TempData["notice"] = "Votre demende sera acceptée";
                     return RedirectToAction("SimulateCredit", "Customer");
                 }
-                TempData["error"] = "Votre demende ne sera pas acceptée";
-                return RedirectToAction("SimulateCredit", "Customer");
+                else
+                {
+                    TempData["error"] = "Votre demende ne sera pas acceptée";
+                    return RedirectToAction("SimulateCredit", "Customer");
+                }
             }
             return View();
         }

@@ -22,12 +22,11 @@ namespace BankApp.Controllers
             accountRepo = new EFAccountRepo(context);
         }
 
-        public TransactionController(ICustomerRepo customerRepo, IAccountRepo accountRepo, ITransactionRepo transactionRepo, BankContext context)
+        public TransactionController(ICustomerRepo customerRepo, IAccountRepo accountRepo, ITransactionRepo transactionRepo)
         {
             this.customerRepo = customerRepo;
             this.accountRepo = accountRepo;
-            this.transactionRepo = transactionRepo; 
-            this.context = context;
+            this.transactionRepo = transactionRepo;
         }
 
         public Customer TransactionCustomer
@@ -49,7 +48,7 @@ namespace BankApp.Controllers
         }
 
         // GET: Transaction
-        public ActionResult Index()
+        public ViewResult Index()
         {
             return View();
         }
@@ -59,26 +58,6 @@ namespace BankApp.Controllers
         {
             if (TransactionCustomer == null) return RedirectToAction("Index", "Home");
             return View(getSelectableAccounts(TransactionCustomer));
-        }
-
-        public ActionResult Transactions()
-        {
-            if (TransactionCustomer == null)
-            {
-                TempData["error"] = "Client inconnu";
-                return RedirectToAction("Index", "Home");
-            };
-            var customer = TransactionCustomer;
-            ViewBag.Solde = 0;
-            foreach (var account in customer.Accounts)
-            {
-                ViewBag.Solde += accountRepo.GetAccountByID(account.ID).Solde;
-            }
-            var accountsId = customer.Accounts.Select(a => a.ID);
-            return View(transactionRepo.GetTransactions().Where(t => 
-                    accountsId.Contains(t.Account.ID) &&
-                    (DateTime.Now - t.Date).TotalDays < 30
-                ).OrderByDescending(t => t.Date).ToList());
         }
 
         [HttpPost]
@@ -145,11 +124,31 @@ namespace BankApp.Controllers
 
         private TrensferFrom getSelectableAccounts(Customer customer)
         {
-            var accounts = customer.Accounts.Select(account => new SelectListItem
+            var accounts = accountRepo.GetAccounts().Where(ac => ac.Owner_ID == customer.ID).Select(account => new SelectListItem
             {
                 Text = account.ID.ToString(), Value = account.ID.ToString()
             }).ToList();
             return new TrensferFrom { AccountsId = accounts };
+        }
+
+        public ActionResult Transactions()
+        {
+            if (TransactionCustomer == null)
+            {
+                TempData["error"] = "Client inconnu";
+                return RedirectToAction("Index", "Home");
+            };
+            var customer = TransactionCustomer;
+            ViewBag.Solde = 0;
+            foreach (var account in customer.Accounts)
+            {
+                ViewBag.Solde += accountRepo.GetAccountByID(account.ID).Solde;
+            }
+            var accountsId = customer.Accounts.Select(a => a.ID);
+            return View(transactionRepo.GetTransactions().Where(t =>
+                    accountsId.Contains(t.Account.ID) &&
+                    (DateTime.Now - t.Date).TotalDays < 30
+                ).OrderByDescending(t => t.Date).ToList());
         }
     }
 }

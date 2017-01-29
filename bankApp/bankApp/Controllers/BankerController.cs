@@ -136,8 +136,8 @@ namespace BankApp.Controllers
         {
             if (!IsConnected) return RedirectToAction("Index", "Home");
             Customer customer = customerRepo.GetCustomerByID(id);
-            db.Customers.Remove(customer);
-            db.SaveChanges();
+            customerRepo.DeleteCustomer(customer.ID);
+            customerRepo.Save();
             return RedirectToAction("Index");
         }
 
@@ -254,7 +254,7 @@ namespace BankApp.Controllers
             return RedirectToAction("Transfer", "Transaction");
         }
 
-        private Customer ValideCustomerForBanker(int? id)
+        public Customer ValideCustomerForBanker(int? id)
         {
             if (id == null)
             {
