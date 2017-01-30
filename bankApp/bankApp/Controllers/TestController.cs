@@ -23,7 +23,7 @@ namespace BankApp.Controllers
             customerRepo = new EFCustomerRepo(context);
             accountRepo = new EFAccountRepo(context);
         }
-        // GET: Test
+        // GET: Test/InsertTestTransaction
         public ActionResult Index()
         {
             return View();

@@ -104,7 +104,11 @@ namespace BankApp.Controllers
                     }
                     TempData["notice"] = "virement enregistré";
                     accountRepo.Save();
-                    return RedirectToAction("Index", "Customer");
+                    Session[Utils.SessionTransactionCustomer] = null;
+                    if(Session[Utils.SessionCustomer] != null)
+                        return RedirectToAction("Index", "Customer");
+                    if(Session[Utils.SessionBanker] != null)
+                        return RedirectToAction("Index", "Banker");
                 }
             }
             return View(getSelectableAccounts(customer));
